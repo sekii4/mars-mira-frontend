@@ -1,6 +1,13 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, CheckCircle2, Loader2, Sprout } from 'lucide-react';
 
 export const AuthPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,7 +23,7 @@ export const AuthPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const switchTab = (tab: 'login' | 'register') => {
+  const switchTab = (tab: string) => {
     setSearchParams(tab === 'register' ? { tab: 'register' } : {});
     setErrorMessage('');
     setSuccessMessage('');
@@ -35,7 +42,7 @@ export const AuthPage = () => {
   const [regCountry, setRegCountry] = useState('Bosna i Hercegovina');
   const [regCity, setRegCity] = useState('');
 
-  // UI status
+  // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -117,678 +124,242 @@ export const AuthPage = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: 'calc(100vh - 70px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '32px 16px',
-        background: 'radial-gradient(ellipse at top, #ECFDF5 0%, #F8FAF8 70%)',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: activeTab === 'register' ? '540px' : '440px',
-          background: 'var(--surface-card)',
-          borderRadius: 'var(--radius-xl)',
-          border: '1px solid var(--border-soft)',
-          boxShadow: 'var(--shadow-card)',
-          padding: '36px 32px',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      >
-        {/* Header Badge & Title */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 14px',
-              borderRadius: 'var(--radius-full)',
-              background: 'var(--surface-mint)',
-              color: 'var(--primary-dark)',
-              fontSize: '12px',
-              fontWeight: 700,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-              marginBottom: '12px',
-              border: '1px solid rgba(16, 185, 129, 0.18)',
-            }}
-          >
-            <span style={{ fontSize: '14px' }}>🌿</span> Marš Mira Srebrenica
+    <div className="flex flex-1 items-center justify-center p-4 sm:p-6 lg:p-8 bg-radial from-emerald-50/60 to-background">
+      <Card className="w-full max-w-lg shadow-lg border-border/80 backdrop-blur-xs">
+        <CardHeader className="text-center pb-4">
+          <div className="flex justify-center mb-3">
+            <Badge variant="outline" className="px-3 py-1 gap-1.5 rounded-full border-emerald-300 bg-emerald-50/80 text-emerald-800 text-xs font-semibold">
+              <Sprout className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Marš Mira Srebrenica</span>
+            </Badge>
           </div>
-          <h1
-            style={{
-              fontSize: '26px',
-              fontWeight: 800,
-              color: 'var(--text-main)',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.25,
-              marginBottom: '6px',
-            }}
-          >
-            {activeTab === 'login' ? 'Dobrodošli nazad' : 'Prijava novog učesnika'}
-          </h1>
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'var(--text-muted)',
-              lineHeight: 1.5,
-            }}
-          >
+          <CardTitle className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            {activeTab === 'login' ? 'Dobrodošli nazad' : 'Registracija učesnika'}
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground mt-1">
             {activeTab === 'login'
               ? 'Prijavite se svojim računom za pristup ruti i timu'
-              : 'Kreirajte svoj račun za učešće u Maršu Mira'}
-          </p>
-        </div>
+              : 'Kreirajte svoj lični račun za učešće u Maršu Mira'}
+          </CardDescription>
+        </CardHeader>
 
-        {/* Tab Switcher */}
-        <div
-          style={{
-            display: 'flex',
-            background: 'var(--surface)',
-            padding: '4px',
-            borderRadius: 'var(--radius-full)',
-            border: '1px solid var(--border-soft)',
-            marginBottom: '24px',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => switchTab('login')}
-            style={{
-              flex: 1,
-              padding: '10px 0',
-              borderRadius: 'var(--radius-full)',
-              fontSize: '14px',
-              fontWeight: 700,
-              color: activeTab === 'login' ? 'var(--text-main)' : 'var(--text-muted)',
-              background: activeTab === 'login' ? '#FFFFFF' : 'transparent',
-              boxShadow: activeTab === 'login' ? 'var(--shadow-sm)' : 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Prijava
-          </button>
-          <button
-            type="button"
-            onClick={() => switchTab('register')}
-            style={{
-              flex: 1,
-              padding: '10px 0',
-              borderRadius: 'var(--radius-full)',
-              fontSize: '14px',
-              fontWeight: 700,
-              color: activeTab === 'register' ? 'var(--text-main)' : 'var(--text-muted)',
-              background: activeTab === 'register' ? '#FFFFFF' : 'transparent',
-              boxShadow: activeTab === 'register' ? 'var(--shadow-sm)' : 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Registracija
-          </button>
-        </div>
-
-        {/* Error Alert */}
-        {errorMessage && (
-          <div
-            style={{
-              background: 'var(--error-bg)',
-              color: 'var(--error-text)',
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '13px',
-              fontWeight: 600,
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              border: '1px solid rgba(186, 26, 26, 0.2)',
-            }}
-          >
-            <span style={{ fontSize: '16px' }}>⚠️</span>
-            <span>{errorMessage}</span>
-          </div>
-        )}
-
-        {/* Success Alert */}
-        {successMessage && (
-          <div
-            style={{
-              background: 'var(--success-bg)',
-              color: 'var(--success-text)',
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '13px',
-              fontWeight: 600,
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-          >
-            <span>✓</span>
-            <span>{successMessage}</span>
-          </div>
-        )}
-
-        {/* ==================================== */}
-        {/* LOGIN FORM */}
-        {/* ==================================== */}
-        {activeTab === 'login' && (
-          <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-            <div>
-              <label
-                htmlFor="login-email"
-                style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--text-main)',
-                  marginBottom: '6px',
-                }}
-              >
-                Email adresa
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                required
-                placeholder="vas.email@primjer.ba"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                  background: '#FFFFFF',
-                  fontSize: '14px',
-                  color: 'var(--text-main)',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--border-focus)';
-                  e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--border-soft)';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
+        <CardContent>
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700 animate-in fade-in-50">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+              <span>{errorMessage}</span>
             </div>
-
-            <div>
-              <label
-                htmlFor="login-password"
-                style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--text-main)',
-                  marginBottom: '6px',
-                }}
-              >
-                Lozinka
-              </label>
-              <input
-                id="login-password"
-                type="password"
-                required
-                placeholder="••••••••"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                  background: '#FFFFFF',
-                  fontSize: '14px',
-                  color: 'var(--text-main)',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--border-focus)';
-                  e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--border-soft)';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{
-                width: '100%',
-                padding: '14px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--primary)',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                fontWeight: 700,
-                boxShadow: 'var(--shadow-glow)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                marginTop: '8px',
-                opacity: isSubmitting ? 0.7 : 1,
-              }}
-              onMouseOver={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
-              }}
-              onMouseOut={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = 'var(--primary)';
-              }}
-            >
-              {isSubmitting ? (
-                <>
-                  <div
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      border: '2px solid #FFFFFF',
-                      borderTop: '2px solid transparent',
-                      borderRadius: '50%',
-                      animation: 'spin 0.6s linear infinite',
-                    }}
-                  />
-                  <span>Prijavljivanje...</span>
-                </>
-              ) : (
-                'Prijavi se'
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* ==================================== */}
-        {/* REGISTER FORM */}
-        {/* ==================================== */}
-        {activeTab === 'register' && (
-          <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* First and Last Name row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-              <div>
-                <label
-                  htmlFor="reg-first-name"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Ime *
-                </label>
-                <input
-                  id="reg-first-name"
-                  type="text"
-                  required
-                  placeholder="npr. Tarik"
-                  value={regFirstName}
-                  onChange={(e) => setRegFirstName(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="reg-last-name"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Prezime *
-                </label>
-                <input
-                  id="reg-last-name"
-                  type="text"
-                  required
-                  placeholder="npr. Hodžić"
-                  value={regLastName}
-                  onChange={(e) => setRegLastName(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="reg-email"
-                style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--text-main)',
-                  marginBottom: '6px',
-                }}
-              >
-                Email adresa *
-              </label>
-              <input
-                id="reg-email"
-                type="email"
-                required
-                placeholder="vas.email@primjer.ba"
-                value={regEmail}
-                onChange={(e) => setRegEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                  background: '#FFFFFF',
-                  fontSize: '14px',
-                  color: 'var(--text-main)',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--border-focus)';
-                  e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--border-soft)';
-                  e.target.style.boxShadow = 'none';
-                }}
-              />
-            </div>
-
-            {/* Country and City */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-              <div>
-                <label
-                  htmlFor="reg-country"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Država *
-                </label>
-                <input
-                  id="reg-country"
-                  type="text"
-                  required
-                  placeholder="npr. Bosna i Hercegovina"
-                  value={regCountry}
-                  onChange={(e) => setRegCountry(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="reg-city"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Grad *
-                </label>
-                <input
-                  id="reg-city"
-                  type="text"
-                  required
-                  placeholder="npr. Sarajevo ili Tuzla"
-                  value={regCity}
-                  onChange={(e) => setRegCity(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Password and Confirm Password */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-              <div>
-                <label
-                  htmlFor="reg-password"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Lozinka (min. 6 znakova) *
-                </label>
-                <input
-                  id="reg-password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="reg-confirm-password"
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    marginBottom: '6px',
-                  }}
-                >
-                  Potvrda lozinke *
-                </label>
-                <input
-                  id="reg-confirm-password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={regConfirmPassword}
-                  onChange={(e) => setRegConfirmPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-full)',
-                    border: '1px solid var(--border-soft)',
-                    background: '#FFFFFF',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--border-focus)';
-                    e.target.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.15)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'var(--border-soft)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{
-                width: '100%',
-                padding: '14px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--primary)',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                fontWeight: 700,
-                boxShadow: 'var(--shadow-glow)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                marginTop: '10px',
-                opacity: isSubmitting ? 0.7 : 1,
-              }}
-              onMouseOver={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
-              }}
-              onMouseOut={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = 'var(--primary)';
-              }}
-            >
-              {isSubmitting ? (
-                <>
-                  <div
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      border: '2px solid #FFFFFF',
-                      borderTop: '2px solid transparent',
-                      borderRadius: '50%',
-                      animation: 'spin 0.6s linear infinite',
-                    }}
-                  />
-                  <span>Kreiranje računa...</span>
-                </>
-              ) : (
-                'Kreiraj račun i nastavi'
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* Footer Prompt */}
-        <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px', color: 'var(--text-muted)' }}>
-          {activeTab === 'login' ? (
-            <p>
-              Nemate još račun?{' '}
-              <button
-                type="button"
-                onClick={() => switchTab('register')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--primary)',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  padding: 0,
-                  fontSize: '13px',
-                }}
-              >
-                Registrujte se besplatno
-              </button>
-            </p>
-          ) : (
-            <p>
-              Već imate kreiran račun?{' '}
-              <button
-                type="button"
-                onClick={() => switchTab('login')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--primary)',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  padding: 0,
-                  fontSize: '13px',
-                }}
-              >
-                Prijavite se ovdje
-              </button>
-            </p>
           )}
-        </div>
-      </div>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800 animate-in fade-in-50">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+              <span>{successMessage}</span>
+            </div>
+          )}
+
+          <Tabs value={activeTab} onValueChange={switchTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6 rounded-full p-1 bg-muted">
+              <TabsTrigger value="login" className="rounded-full font-semibold cursor-pointer text-sm">
+                Prijava
+              </TabsTrigger>
+              <TabsTrigger value="register" className="rounded-full font-semibold cursor-pointer text-sm">
+                Registracija
+              </TabsTrigger>
+            </TabsList>
+
+            {/* LOGIN FORM */}
+            <TabsContent value="login">
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email adresa</Label>
+                  <Input
+                    id="login-email"
+                    type="email"
+                    required
+                    placeholder="vas.email@primjer.ba"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="rounded-full h-11 px-4"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Lozinka</Label>
+                  <Input
+                    id="login-password"
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="rounded-full h-11 px-4"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-600/25 mt-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span>Prijavljivanje...</span>
+                    </>
+                  ) : (
+                    'Prijavi se'
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+
+            {/* REGISTER FORM */}
+            <TabsContent value="register">
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-first-name">Ime *</Label>
+                    <Input
+                      id="reg-first-name"
+                      type="text"
+                      required
+                      placeholder="npr. Tarik"
+                      value={regFirstName}
+                      onChange={(e) => setRegFirstName(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-last-name">Prezime *</Label>
+                    <Input
+                      id="reg-last-name"
+                      type="text"
+                      required
+                      placeholder="npr. Hodžić"
+                      value={regLastName}
+                      onChange={(e) => setRegLastName(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="reg-email">Email adresa *</Label>
+                  <Input
+                    id="reg-email"
+                    type="email"
+                    required
+                    placeholder="vas.email@primjer.ba"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    className="rounded-full h-10 px-4"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-country">Država *</Label>
+                    <Input
+                      id="reg-country"
+                      type="text"
+                      required
+                      placeholder="Bosna i Hercegovina"
+                      value={regCountry}
+                      onChange={(e) => setRegCountry(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-city">Grad *</Label>
+                    <Input
+                      id="reg-city"
+                      type="text"
+                      required
+                      placeholder="Sarajevo"
+                      value={regCity}
+                      onChange={(e) => setRegCity(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-password">Lozinka (min. 6) *</Label>
+                    <Input
+                      id="reg-password"
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-confirm-password">Potvrda lozinke *</Label>
+                    <Input
+                      id="reg-confirm-password"
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regConfirmPassword}
+                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      className="rounded-full h-10 px-4"
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-600/25 mt-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span>Kreiranje računa...</span>
+                    </>
+                  ) : (
+                    'Kreiraj račun i nastavi'
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+
+        <CardFooter className="justify-center border-t border-border/50 pt-4">
+          <p className="text-xs text-muted-foreground text-center">
+            {activeTab === 'login' ? (
+              <>
+                Nemate još račun?{' '}
+                <button
+                  type="button"
+                  onClick={() => switchTab('register')}
+                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-2 ml-1"
+                >
+                  Registrujte se besplatno
+                </button>
+              </>
+            ) : (
+              <>
+                Već imate kreiran račun?{' '}
+                <button
+                  type="button"
+                  onClick={() => switchTab('login')}
+                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-2 ml-1"
+                >
+                  Prijavite se ovdje
+                </button>
+              </>
+            )}
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

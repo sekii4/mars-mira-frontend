@@ -1,5 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Mountain, LogOut, User } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -11,158 +14,50 @@ export const Navbar = () => {
   };
 
   return (
-    <header
-      style={{
-        background: '#FFFFFF',
-        borderBottom: '1px solid var(--border-soft)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '14px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        {/* Brand Logo & Name */}
-        <Link
-          to="/"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            textDecoration: 'none',
-          }}
-        >
-          {/* Emblem Icon */}
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #10B981 0%, #006C49 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              boxShadow: 'var(--shadow-glow)',
-            }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-            </svg>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-md shadow-xs">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Brand */}
+        <Link to="/" className="flex items-center gap-3 group transition-opacity hover:opacity-90">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-emerald-700 text-white shadow-md shadow-emerald-500/20">
+            <Mountain className="h-5 w-5" />
           </div>
           <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-family)',
-                fontSize: '18px',
-                fontWeight: 800,
-                color: 'var(--text-main)',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.2,
-              }}
-            >
-              MARŠ MIRA
+            <div className="text-base font-extrabold tracking-tight text-foreground uppercase">
+              Marš Mira
             </div>
-            <div
-              style={{
-                fontSize: '11px',
-                fontWeight: 600,
-                color: 'var(--primary-dark)',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
+            <div className="text-[11px] font-semibold tracking-wider text-emerald-700 uppercase">
               Srebrenica
             </div>
           </div>
         </Link>
 
-        {/* Right Nav actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* User / Actions */}
+        <div className="flex items-center gap-3">
           {isAuthenticated && user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'var(--surface-mint)',
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
-                }}
-              >
-                <div
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--primary)',
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                  }}
-                >
-                  {user.first_name} {user.last_name}
-                </span>
-              </div>
-              <button
-                type="button"
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary" className="hidden sm:flex items-center gap-1.5 py-1 px-3 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-800 border-emerald-200">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <User className="h-3.5 w-3.5" />
+                <span>{user.first_name} {user.last_name}</span>
+              </Badge>
+
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleLogout}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--text-muted)',
-                  backgroundColor: 'transparent',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FEE2E2';
-                  e.currentTarget.style.color = '#DC2626';
-                  e.currentTarget.style.borderColor = '#FCA5A5';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = 'var(--text-muted)';
-                  e.currentTarget.style.borderColor = 'var(--border-soft)';
-                }}
+                className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
               >
-                Odjavi se
-              </button>
+                <LogOut className="h-4 w-4 mr-1 sm:mr-1.5" />
+                <span>Odjavi se</span>
+              </Button>
             </div>
           ) : (
-            <Link
-              to="/auth"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '10px 20px',
-                fontSize: '14px',
-                fontWeight: 700,
-                color: '#FFFFFF',
-                backgroundColor: 'var(--primary)',
-                borderRadius: 'var(--radius-full)',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)',
-              }}
+            <Button
+              asChild
+              className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30"
             >
-              Prijavi se
-            </Link>
+              <Link to="/auth">Prijavi se</Link>
+            </Button>
           )}
         </div>
       </div>

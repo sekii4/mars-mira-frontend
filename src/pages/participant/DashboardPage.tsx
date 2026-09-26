@@ -1,5 +1,19 @@
 import { useState, type FormEvent } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Users, MapPin, Route, ShieldCheck, UserCheck, Plus, KeyRound } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -12,7 +26,7 @@ export const DashboardPage = () => {
   const handleJoinSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!teamCode.trim()) return;
-    setActionNotice(`Unesen kod "${teamCode.trim().toUpperCase()}". Funkcionalnost pridruživanja grupama stiže uskoro na sljedećem sprintu!`);
+    setActionNotice(`Unesen kod "${teamCode.trim().toUpperCase()}". Funkcionalnost pridruživanja timu stiže na narednom sprintu!`);
     setShowJoinModal(false);
     setTeamCode('');
   };
@@ -20,479 +34,255 @@ export const DashboardPage = () => {
   const handleCreateSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!newTeamName.trim()) return;
-    setActionNotice(`Grupa "${newTeamName.trim()}" će biti omogućena u narednom modulu.`);
+    setActionNotice(`Tim "${newTeamName.trim()}" će biti aktiviran u narednom koraku.`);
     setShowCreateModal(false);
     setNewTeamName('');
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '32px 20px',
-        width: '100%',
-      }}
-    >
-      {/* Top Welcome Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '32px',
-          border: '1px solid rgba(16, 185, 129, 0.2)',
-          boxShadow: 'var(--shadow-card)',
-          marginBottom: '28px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '20px',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 12px',
-              borderRadius: 'var(--radius-full)',
-              background: '#FFFFFF',
-              color: 'var(--primary-dark)',
-              fontSize: '12px',
-              fontWeight: 700,
-              border: '1px solid var(--border-soft)',
-              marginBottom: '10px',
-            }}
-          >
-            <span style={{ color: 'var(--primary)' }}>●</span> Učesnički profil
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+      {/* Welcome Banner Card */}
+      <Card className="border-emerald-200/60 bg-linear-to-br from-emerald-50/80 via-card to-card shadow-md">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-emerald-600 hover:bg-emerald-600 text-white gap-1 rounded-full px-3 py-0.5 text-xs font-semibold">
+                <UserCheck className="h-3.5 w-3.5" />
+                <span>Učesnički profil</span>
+              </Badge>
+              <Badge variant="outline" className="border-emerald-200 text-emerald-800 bg-emerald-50/50 rounded-full px-3 py-0.5 text-xs">
+                Marš Mira 2026
+              </Badge>
+            </div>
+            <CardTitle className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Dobrodošli, {user?.first_name} {user?.last_name}!
+            </CardTitle>
+            <CardDescription className="text-sm sm:text-base text-muted-foreground">
+              Vaš nalog je uspješno kreiran. Ovdje možete upravljati svojim timom i pratiti detalje o maršu.
+            </CardDescription>
           </div>
-          <h1
-            style={{
-              fontSize: '28px',
-              fontWeight: 800,
-              color: 'var(--text-main)',
-              letterSpacing: '-0.02em',
-              marginBottom: '6px',
-            }}
+
+          <Button
+            variant="outline"
+            onClick={logout}
+            className="self-start sm:self-auto rounded-full cursor-pointer hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
           >
-            Dobrodošli, {user?.first_name} {user?.last_name}!
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>
-            Vaša registracija za Marš Mira je aktivna. Ovdje možete upravljati svojim timom i pregledati detalje.
-          </p>
-        </div>
+            Odjava sa profila
+          </Button>
+        </CardHeader>
+      </Card>
 
-        <button
-          type="button"
-          onClick={logout}
-          style={{
-            padding: '10px 22px',
-            borderRadius: 'var(--radius-full)',
-            background: '#FFFFFF',
-            border: '1px solid var(--border-soft)',
-            color: 'var(--text-muted)',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#FEE2E2';
-            e.currentTarget.style.color = '#DC2626';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#FFFFFF';
-            e.currentTarget.style.color = 'var(--text-muted)';
-          }}
-        >
-          Odjava
-        </button>
-      </div>
-
-      {/* Action Notice if triggered */}
+      {/* Action Banner / Notification */}
       {actionNotice && (
-        <div
-          style={{
-            background: 'var(--surface-mint)',
-            color: 'var(--success-text)',
-            padding: '14px 20px',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            marginBottom: '24px',
-            fontSize: '14px',
-            fontWeight: 600,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
+        <div className="flex items-center justify-between rounded-xl border border-emerald-300 bg-emerald-50/90 p-4 text-sm font-semibold text-emerald-900 shadow-xs animate-in fade-in-50">
           <span>ℹ️ {actionNotice}</span>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActionNotice(null)}
-            style={{ background: 'none', border: 'none', color: 'var(--success-text)', cursor: 'pointer', fontWeight: 700 }}
+            className="h-8 w-8 p-0 text-emerald-800 hover:bg-emerald-100/50 rounded-full cursor-pointer"
           >
             ✕
-          </button>
+          </Button>
         </div>
       )}
 
-      {/* Grid: Action Cards & Profile Info */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '24px',
-        }}
-      >
-        {/* Card 1: Grupe / Timovi */}
-        <div
-          style={{
-            background: 'var(--surface-card)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '28px',
-            border: '1px solid var(--border-soft)',
-            boxShadow: 'var(--shadow-card)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>
-            <div
-              style={{
-                width: '46px',
-                height: '46px',
-                borderRadius: '12px',
-                background: 'var(--surface-mint)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '22px',
-                marginBottom: '16px',
-              }}
-            >
-              👥
+      {/* Grid: 3 Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Card 1: Team & Group */}
+        <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow">
+          <CardHeader>
+            <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+              <Users className="h-6 w-6" />
             </div>
-            <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
-              Grupa i Tim
-            </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.5, marginBottom: '20px' }}>
-              Učestvujete li samostalno ili sa prijateljima? Možete se pridružiti postojećem timu pomoću koda ili kreirati novi tim kao vođa grupe.
-            </p>
-          </div>
+            <CardTitle className="text-xl font-bold">Grupa i Tim</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+              Učestvujete li sa prijateljima ili organizacijom? Pridružite se grupi pomoću koda ili osnujte novi tim kao vođa.
+            </CardDescription>
+          </CardHeader>
 
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
+          <CardFooter className="flex flex-wrap gap-2 pt-2">
+            <Button
               onClick={() => setShowJoinModal(true)}
-              style={{
-                flex: 1,
-                padding: '12px 18px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--primary)',
-                color: '#FFFFFF',
-                fontSize: '13px',
-                fontWeight: 700,
-                boxShadow: 'var(--shadow-glow)',
-                minWidth: '130px',
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--primary-hover)')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--primary)')}
+              className="flex-1 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5 shadow-sm shadow-emerald-600/20"
             >
-              Pridruži se kodu
-            </button>
-            <button
-              type="button"
+              <KeyRound className="h-4 w-4" />
+              <span>Pridruži se</span>
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => setShowCreateModal(true)}
-              style={{
-                flex: 1,
-                padding: '12px 18px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--surface-mint)',
-                color: 'var(--primary-dark)',
-                fontSize: '13px',
-                fontWeight: 700,
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                minWidth: '130px',
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#D1FAE5')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-mint)')}
+              className="flex-1 rounded-full cursor-pointer bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 gap-1.5 font-bold"
             >
-              + Kreiraj tim
-            </button>
-          </div>
-        </div>
+              <Plus className="h-4 w-4" />
+              <span>Kreiraj tim</span>
+            </Button>
+          </CardFooter>
+        </Card>
 
-        {/* Card 2: Lični Podaci */}
-        <div
-          style={{
-            background: 'var(--surface-card)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '28px',
-            border: '1px solid var(--border-soft)',
-            boxShadow: 'var(--shadow-card)',
-          }}
-        >
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              background: 'var(--surface-mint)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '22px',
-              marginBottom: '16px',
-            }}
-          >
-            📋
-          </div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>
-            Detalji profila
-          </h2>
+        {/* Card 2: Profile Details */}
+        <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow">
+          <CardHeader>
+            <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-xl font-bold">Podaci o učesniku</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Pregled vaših ličnih informacija registrovanih u bazi:
+            </CardDescription>
+          </CardHeader>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--border-soft)' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Email</span>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{user?.email}</span>
+          <CardContent className="space-y-3 text-sm">
+            <div className="flex justify-between items-center py-1 border-b border-border/60">
+              <span className="text-muted-foreground">Email:</span>
+              <span className="font-semibold text-foreground">{user?.email}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--border-soft)' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Prebivalište</span>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{user?.city}, {user?.country}</span>
+            <div className="flex justify-between items-center py-1 border-b border-border/60">
+              <span className="text-muted-foreground">Prebivalište:</span>
+              <span className="font-semibold text-foreground">{user?.city}, {user?.country}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--border-soft)' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Uloga</span>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary-dark)', textTransform: 'capitalize' }}>{user?.role}</span>
+            <div className="flex justify-between items-center py-1 border-b border-border/60">
+              <span className="text-muted-foreground">Uloga:</span>
+              <Badge variant="outline" className="font-semibold capitalize text-emerald-800 bg-emerald-50/60 border-emerald-200">
+                {user?.role}
+              </Badge>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Status verifikacije</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--primary)' }}>Aktiviran ✓</span>
+            <div className="flex justify-between items-center py-1">
+              <span className="text-muted-foreground">Status naloga:</span>
+              <span className="font-bold text-emerald-600">Aktivan ✓</span>
             </div>
-          </div>
-        </div>
+          </CardContent>
 
-        {/* Card 3: Informacije o ruti */}
-        <div
-          style={{
-            background: 'var(--surface-card)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '28px',
-            border: '1px solid var(--border-soft)',
-            boxShadow: 'var(--shadow-card)',
-          }}
-        >
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              background: 'var(--surface-mint)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '22px',
-              marginBottom: '16px',
-            }}
-          >
-            🗺️
-          </div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
-            Ruta Marša Mira
-          </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.5, marginBottom: '16px' }}>
-            Trasa duga preko 100 kilometara podijeljena u tri jednodnevne etape:
-          </p>
+          <CardFooter>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Podaci se koriste za sigurnosne i logističke spiskove.</span>
+            </div>
+          </CardFooter>
+        </Card>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ padding: '8px 12px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: '13px', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Dan 1: <strong>Nezuk → Liplje</strong></span>
-              <span style={{ color: 'var(--text-muted)' }}>~35 km</span>
+        {/* Card 3: Route Overview */}
+        <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow">
+          <CardHeader>
+            <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+              <Route className="h-6 w-6" />
             </div>
-            <div style={{ padding: '8px 12px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: '13px', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Dan 2: <strong>Liplje → Mravinjci</strong></span>
-              <span style={{ color: 'var(--text-muted)' }}>~35 km</span>
+            <CardTitle className="text-xl font-bold">Ruta Marša Mira</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Zvanična trasa duga ~100 kilometara podijeljena u tri jednodnevne etape:
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-2.5">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted text-xs sm:text-sm">
+              <span className="font-medium">1. dan: <strong>Nezuk → Liplje</strong></span>
+              <Badge variant="secondary" className="font-mono text-xs">~35 km</Badge>
             </div>
-            <div style={{ padding: '8px 12px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', fontSize: '13px', display: 'flex', justifyContent: 'space-between' }}>
-              <span>Dan 3: <strong>Mravinjci → Potočari</strong></span>
-              <span style={{ color: 'var(--text-muted)' }}>~30 km</span>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted text-xs sm:text-sm">
+              <span className="font-medium">2. dan: <strong>Liplje → Mravinjci</strong></span>
+              <Badge variant="secondary" className="font-mono text-xs">~35 km</Badge>
             </div>
-          </div>
-        </div>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted text-xs sm:text-sm">
+              <span className="font-medium">3. dan: <strong>Mravinjci → Potočari</strong></span>
+              <Badge variant="secondary" className="font-mono text-xs">~30 km</Badge>
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <p className="text-xs text-muted-foreground">
+              Cilj marša je Memorijalni centar Potočari 10. jula.
+            </p>
+          </CardFooter>
+        </Card>
       </div>
 
-      {/* Join Team Modal */}
-      {showJoinModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            background: 'rgba(30, 41, 59, 0.4)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            padding: '20px',
-          }}
-        >
-          <div
-            style={{
-              background: '#FFFFFF',
-              borderRadius: 'var(--radius-xl)',
-              padding: '32px',
-              maxWidth: '420px',
-              width: '100%',
-              boxShadow: 'var(--shadow-card)',
-            }}
-          >
-            <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Pridruži se grupi</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '20px' }}>
-              Unesite 6-cifreni kod koji ste dobili od vođe vaše grupe:
-            </p>
-            <form onSubmit={handleJoinSubmit}>
-              <input
+      {/* Shadcn Dialog: Join Team Modal */}
+      <Dialog open={showJoinModal} onOpenChange={setShowJoinModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Pridruži se postojećem timu</DialogTitle>
+            <DialogDescription>
+              Unesite 6-cifreni kod koji vam je poslao vođa grupe:
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleJoinSubmit} className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="team-code">Kod grupe</Label>
+              <Input
+                id="team-code"
                 type="text"
                 required
                 placeholder="npr. MM-8492"
                 value={teamCode}
                 onChange={(e) => setTeamCode(e.target.value.toUpperCase())}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textAlign: 'center',
-                  marginBottom: '20px',
-                }}
+                className="h-12 rounded-full text-center text-lg font-bold tracking-widest uppercase"
               />
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowJoinModal(false)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border-soft)',
-                    fontWeight: 600,
-                    fontSize: '14px',
-                  }}
-                >
-                  Odustani
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--primary)',
-                    color: '#FFFFFF',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                  }}
-                >
-                  Potvrdi
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
 
-      {/* Create Team Modal */}
-      {showCreateModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            background: 'rgba(30, 41, 59, 0.4)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            padding: '20px',
-          }}
-        >
-          <div
-            style={{
-              background: '#FFFFFF',
-              borderRadius: 'var(--radius-xl)',
-              padding: '32px',
-              maxWidth: '420px',
-              width: '100%',
-              boxShadow: 'var(--shadow-card)',
-            }}
-          >
-            <h3 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>Kreiraj novi tim</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '20px' }}>
-              Unesite naziv vaše ekipe. Nakon kreiranja dobit ćete jedinstveni kod za poziv članova:
-            </p>
-            <form onSubmit={handleCreateSubmit}>
-              <input
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowJoinModal(false)}
+                className="rounded-full cursor-pointer"
+              >
+                Odustani
+              </Button>
+              <Button
+                type="submit"
+                className="rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+              >
+                Potvrdi i pridruži se
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Shadcn Dialog: Create Team Modal */}
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Kreiraj novu grupu</DialogTitle>
+            <DialogDescription>
+              Unesite naziv grupe. Kao vođa, dobit ćete jedinstveni kod za poziv ostalih učesnika:
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateSubmit} className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="team-name">Naziv grupe</Label>
+              <Input
+                id="team-name"
                 type="text"
                 required
-                placeholder="npr. Tuzlanski maratonci"
+                placeholder="npr. Tuzlanski planinari"
                 value={newTeamName}
                 onChange={(e) => setNewTeamName(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-soft)',
-                  fontSize: '14px',
-                  marginBottom: '20px',
-                }}
+                className="h-11 rounded-full px-4"
               />
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border-soft)',
-                    fontWeight: 600,
-                    fontSize: '14px',
-                  }}
-                >
-                  Odustani
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--primary)',
-                    color: '#FFFFFF',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                  }}
-                >
-                  Kreiraj tim
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCreateModal(false)}
+                className="rounded-full cursor-pointer"
+              >
+                Odustani
+              </Button>
+              <Button
+                type="submit"
+                className="rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+              >
+                Kreiraj tim
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
