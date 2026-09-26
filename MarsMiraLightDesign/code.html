@@ -1,0 +1,436 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-mint": "#ECFDF5",
+            "badge-peach": "#FFEDD5",
+            "badge-peach-text": "#9A3412",
+            "badge-butter": "#FEF3C7",
+            "badge-butter-text": "#92400E",
+            "badge-sky": "#E0F2FE",
+            "badge-sky-text": "#0369A1",
+            "badge-lavender": "#F3E8FF",
+            "badge-lavender-text": "#6B21A8",
+            "text-main": "#0F172A",
+            "text-muted": "#64748B",
+            "border-soft": "#E2E8F0",
+            "primary": "#10B981",
+            "primary-dark": "#059669",
+            "primary-light": "#D1FAE5"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          },
+          boxShadow: {
+            'cute': '0 8px 24px -4px rgba(16, 185, 129, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.05)',
+            'bubble': '0 12px 30px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04)',
+            'pin': '0 6px 16px -2px rgba(16, 185, 129, 0.35)'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+      min-height: max(884px, 100dvh);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-text-main flex flex-col min-h-screen select-none selection:bg-emerald-100 selection:text-emerald-900">
+<!-- Cheerful Top App Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl pt-safe border-b border-emerald-100/70 shadow-sm">
+<div class="h-16 px-4 flex items-center justify-between gap-3">
+<!-- Title & Cheerful Badge -->
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-cute shrink-0">
+<span class="material-symbols-outlined text-[24px]">hiking</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h1 class="font-extrabold text-[17px] tracking-tight text-slate-900">Marš Mira</h1>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100/90 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live
+            </span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+<span>Stage 2: Liplje → Mravinjci</span>
+<span class="text-emerald-600 font-semibold">🌿</span>
+</div>
+</div>
+</div>
+<!-- Friendly Right Status & Cute Profile -->
+<div class="flex items-center gap-2 shrink-0">
+<div class="hidden xs:flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold">
+<span class="material-symbols-outlined text-[15px] text-emerald-600">wifi</span>
+<span>Online</span>
+</div>
+<button aria-label="Profile" class="relative w-10 h-10 rounded-2xl p-0.5 bg-gradient-to-b from-emerald-200 to-emerald-400 shadow-sm active:scale-95 transition-transform">
+<img alt="Participant avatar" class="w-full h-full rounded-[14px] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb0w7p2nedSkY2cVzt2j_znpQh-6ds2IIWBXKSnO2tGgszH-p85dMtHkUOsyO9wTb581ELplxo_IamnCA3Q4QlAB73bpRmfQUCFCR-Glsg1P04B4b2RDIO75L9McA5IOBe8tBSod8a6BQhflhog1zzy52yS2EqidaeBqdds5sVszmAVIkRnyaK4oT3ggdPCXGy661J3PheByeSb9Hb-orU91ock3YRjMdw2yIp-G8ZJyJ0WFAE23SjMw">
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Map Experience -->
+<main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-slate-50">
+<div class="flex flex-col w-full relative">
+<!-- Friendly Light Mode Topographic Map Canvas -->
+<div class="relative w-full h-[540px] overflow-hidden bg-gradient-to-b from-[#EBF7F0] via-[#F3FAF5] to-[#EEF8F2]">
+<!-- Soft Decorative Topo Contours & Soft Nature Hills (SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 400 540" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="trailGradient" x1="0%" x2="0%" y1="100%" y2="0%">
+<stop offset="0%" stop-color="#10B981"></stop>
+<stop offset="100%" stop-color="#059669"></stop>
+</linearGradient>
+<radialGradient cx="50%" cy="50%" id="userHalo" r="50%">
+<stop offset="0%" stop-color="#10B981" stop-opacity="0.3"></stop>
+<stop offset="60%" stop-color="#34D399" stop-opacity="0.12"></stop>
+<stop offset="100%" stop-color="#34D399" stop-opacity="0"></stop>
+</radialGradient>
+<!-- Soft pastel contour terrain shapes -->
+<filter height="120%" id="softShadow" width="120%" x="-10%" y="-10%">
+<feDropShadow dx="0" dy="2" flood-color="#065f46" flood-opacity="0.08" stdDeviation="3"></feDropShadow>
+</filter>
+</defs>
+<!-- Organic Mountain/Hill Pastel Layers -->
+<path d="M-40,160 Q60,110 180,150 T440,130 L440,0 L-40,0 Z" fill="#E2F5EA" opacity="0.6"></path>
+<path d="M-40,320 Q80,260 220,300 T440,270 L440,0 L-40,0 Z" fill="#E8F8EE" opacity="0.7"></path>
+<!-- Gentle Topo Contour Lines -->
+<path d="M -20,70 C 80,45 160,95 420,60" fill="none" opacity="0.7" stroke="#A7F3D0" stroke-dasharray="4,6" stroke-width="1.5"></path>
+<path d="M -20,130 C 110,90 230,150 420,110" fill="none" opacity="0.45" stroke="#6EE7B7" stroke-width="1.5"></path>
+<path d="M -20,200 C 70,165 210,240 420,180" fill="none" opacity="0.7" stroke="#A7F3D0" stroke-width="1.5"></path>
+<path d="M -20,280 C 130,230 250,310 420,250" fill="none" opacity="0.5" stroke="#6EE7B7" stroke-width="1.8"></path>
+<path d="M -20,370 C 90,320 220,400 420,340" fill="none" opacity="0.65" stroke="#A7F3D0" stroke-dasharray="4,6" stroke-width="1.5"></path>
+<path d="M -20,460 C 140,410 260,490 420,430" fill="none" opacity="0.6" stroke="#A7F3D0" stroke-width="1.5"></path>
+<!-- Cute Little Nature Trees on Hills -->
+<g fill="#10B981" opacity="0.25">
+<circle cx="60" cy="110" r="7"></circle>
+<circle cx="68" cy="113" r="5"></circle>
+<circle cx="320" cy="140" r="8"></circle>
+<circle cx="330" cy="144" r="6"></circle>
+<circle cx="80" cy="350" r="7"></circle>
+<circle cx="350" cy="310" r="9"></circle>
+</g>
+<!-- Traversed Route (Chunky Friendly Green Tube) -->
+<path d="M 55,490 L 88,435 L 132,405 L 148,340 L 195,290 L 210,230" fill="none" opacity="0.7" stroke="#A7F3D0" stroke-linecap="round" stroke-linejoin="round" stroke-width="11"></path>
+<path d="M 55,490 L 88,435 L 132,405 L 148,340 L 195,290 L 210,230" fill="none" stroke="url(#trailGradient)" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"></path>
+<!-- Upcoming Route Segment (Friendly Cheerful Dotted Emerald) -->
+<path d="M 210,230 L 246,180 L 290,148 L 315,95 L 345,45" fill="none" stroke="#34D399" stroke-dasharray="6,9" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"></path>
+<!-- User Location Pulse Ring -->
+<circle cx="210" cy="230" fill="url(#userHalo)" r="44"></circle>
+<circle cx="210" cy="230" fill="none" opacity="0.5" r="28" stroke="#10B981" stroke-dasharray="3,4" stroke-width="1.5"></circle>
+</svg>
+<!-- MAP MARKERS: Cute, Large, Readable & Friendly -->
+<!-- Start Point: Liplje (Completed) -->
+<div class="absolute left-[38px] top-[480px] -translate-y-1/2 flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-white text-emerald-600 shadow-cute border-2 border-emerald-300 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-sm border border-emerald-100">
+<span class="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Liplje Start</span>
+</div>
+</div>
+<!-- Aid Station Marker: 14K -->
+<div class="absolute left-[134px] top-[340px] -translate-y-1/2 flex items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform" onclick="inspectPeer('Red Cross Aid #2', 'Passed 4.4km ago', 'First Aid &amp; Hydration', 'Support Post')">
+<div class="w-8 h-8 rounded-full bg-rose-50 border-2 border-rose-400 text-rose-500 flex items-center justify-center shadow-cute">
+<span class="material-symbols-outlined text-[18px]">medical_services</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-bold text-rose-700 shadow-sm border border-rose-100">Aid 14k</span>
+</div>
+<!-- Teammate 1: Tarik (Trailing cute pill) -->
+<div class="absolute left-[175px] top-[280px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer active:scale-95 transition-transform" onclick="inspectPeer('Tarik H.', '-120m', 'Heart Rate 138 • Walking strong', 'Teammate')">
+<div class="relative group flex items-center gap-1.5 bg-white pl-1 pr-2.5 py-1 rounded-full shadow-cute border border-teal-100">
+<div class="w-6 h-6 rounded-full bg-teal-500 text-white font-bold text-[11px] flex items-center justify-center">
+              TH
+            </div>
+<span class="text-[11px] font-bold text-slate-700">Tarik</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+</div>
+<!-- Current User (YOU) - Cute Hero Marker -->
+<div class="absolute left-[210px] top-[230px] -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pointer-events-none">
+<div class="relative flex items-center justify-center">
+<span class="absolute w-10 h-10 rounded-full bg-emerald-400/30 animate-ping"></span>
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 p-0.5 shadow-pin flex items-center justify-center transform rotate-45">
+<div class="w-full h-full rounded-[14px] bg-white flex items-center justify-center transform -rotate-45">
+<span class="material-symbols-outlined text-emerald-600 text-[22px]">directions_walk</span>
+</div>
+</div>
+</div>
+<div class="mt-2 px-2.5 py-0.5 rounded-full bg-slate-900 text-white shadow-md text-center">
+<span class="text-[11px] font-extrabold tracking-wide">YOU • 18.4 km</span>
+</div>
+</div>
+<!-- Teammate 2: Emina (Ahead) -->
+<div class="absolute left-[236px] top-[175px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer active:scale-95 transition-transform" onclick="inspectPeer('Emina K.', '+180m', 'Pace Leader • 4.5 km/h', 'Pace Leader')">
+<div class="relative group flex items-center gap-1.5 bg-white pl-1 pr-2.5 py-1 rounded-full shadow-cute border border-violet-100">
+<div class="w-6 h-6 rounded-full bg-purple-500 text-white font-bold text-[11px] flex items-center justify-center">
+              EK
+            </div>
+<span class="text-[11px] font-bold text-slate-700">Emina</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+</div>
+<!-- Target Destination / Milestone: Kamenica Springs -->
+<div class="absolute left-[260px] top-[140px] -translate-y-1/2 z-15 flex items-center gap-2 cursor-pointer" onclick="inspectPeer('Kamenica Rest Point', '2.8 km ahead', 'Fresh natural spring water &amp; shade', 'Milestone')">
+<div class="w-9 h-9 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center shadow-cute animate-bounce">
+<span class="material-symbols-outlined text-[20px]">water_drop</span>
+</div>
+<div class="px-3 py-1 rounded-2xl bg-white/95 backdrop-blur-md shadow-cute border border-amber-200">
+<div class="flex items-center gap-1">
+<span class="font-bold text-xs text-slate-800">Kamenica</span>
+<span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded-full">Next Stop</span>
+</div>
+<span class="text-[11px] text-slate-500 font-semibold">2.8 km away</span>
+</div>
+</div>
+<!-- Glodi Night Camp Indicator -->
+<div class="absolute left-[310px] top-[75px] -translate-y-1/2 z-10 flex items-center gap-1.5 opacity-80">
+<div class="w-7 h-7 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">bed</span>
+</div>
+<span class="text-[11px] font-bold text-slate-600 bg-white/80 px-2 py-0.5 rounded-full">Glodi Camp</span>
+</div>
+<!-- TOP FLOATING CARD: Decluttered Vital Stats Card -->
+<div class="absolute top-3 inset-x-4 z-30 flex flex-col gap-2">
+<div class="bg-white/95 backdrop-blur-xl rounded-3xl p-4 shadow-bubble border border-emerald-100">
+<!-- 3 Vital Metrics Bento (Clean, Readable & Friendly) -->
+<div class="grid grid-cols-3 divide-x divide-slate-100 gap-1 text-center">
+<!-- Metric 1: Walking Pace -->
+<div class="flex flex-col items-center px-1">
+<div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-[19px]">speed</span>
+</div>
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Pace</span>
+<div class="flex items-baseline gap-0.5 mt-0.5">
+<span class="text-xl font-extrabold text-slate-800">4.2</span>
+<span class="text-[11px] font-bold text-slate-500">km/h</span>
+</div>
+</div>
+<!-- Metric 2: Distance Covered -->
+<div class="flex flex-col items-center px-1">
+<div class="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-[19px]">straighten</span>
+</div>
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Walked</span>
+<div class="flex items-baseline gap-0.5 mt-0.5">
+<span class="text-xl font-extrabold text-emerald-600">18.4</span>
+<span class="text-[11px] font-bold text-slate-400">/35k</span>
+</div>
+</div>
+<!-- Metric 3: Time Elapsed & Elevation -->
+<div class="flex flex-col items-center px-1">
+<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-[19px]">schedule</span>
+</div>
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Time</span>
+<div class="flex items-baseline gap-0.5 mt-0.5">
+<span class="text-xl font-extrabold text-slate-800">04:32</span>
+</div>
+</div>
+</div>
+<!-- Friendly Cheerful Progress Bar -->
+<div class="mt-3.5 pt-3 border-t border-slate-100 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-xs">
+<span class="font-bold text-slate-700 flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  Liplje → Glodi Camp
+                </span>
+<span class="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px]">53% Done</span>
+</div>
+<div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden p-0.5">
+<div class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-700" style="width: 53%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT FLOATING QUICK ACTIONS (Larger, rounded-full, cute white buttons) -->
+<div class="absolute right-4 bottom-8 z-30 flex flex-col gap-3">
+<!-- Compass Bearings -->
+<button aria-label="Compass" class="w-12 h-12 rounded-full bg-white text-slate-700 shadow-bubble border border-slate-100 flex items-center justify-center active:scale-90 transition-transform hover:bg-slate-50">
+<span class="material-symbols-outlined text-[24px] text-teal-600" style="transform: rotate(38deg);">explore</span>
+</button>
+<!-- Toggle Topo/Layers -->
+<button aria-label="Map layers" class="w-12 h-12 rounded-full bg-white text-slate-700 shadow-bubble border border-slate-100 flex items-center justify-center active:scale-90 transition-transform hover:bg-slate-50" id="layerToggleBtn" onclick="toggleCuteLayer()">
+<span class="material-symbols-outlined text-[24px] text-emerald-600">layers</span>
+</button>
+<!-- Recenter GPS -->
+<button aria-label="My location" class="w-12 h-12 rounded-full bg-emerald-500 text-white shadow-pin flex items-center justify-center active:scale-90 transition-transform hover:bg-emerald-600" onclick="recenterCuteMap()">
+<span class="material-symbols-outlined text-[26px]">my_location</span>
+</button>
+</div>
+<!-- Interactive Peer/Spot Info Popup (Cute Pill Modal) -->
+<div class="hidden absolute bottom-6 left-4 right-20 z-30 p-3 rounded-2xl bg-white/95 backdrop-blur-xl shadow-bubble border border-emerald-100 transition-all" id="peerDetailModal">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-sm" id="peerAvatarBadge">
+<span id="peerInitials">TH</span>
+</div>
+<div class="min-w-0">
+<p class="font-bold text-slate-900 text-sm leading-tight truncate" id="peerName">Tarik H.</p>
+<p class="text-xs text-slate-500 font-medium truncate mt-0.5" id="peerStats">Trailing -120m • Heart Rate 138</p>
+</div>
+</div>
+<button class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center" onclick="dismissPeerModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Charming Bottom Sheet / Drawer: Next Milestone & Friendly Actions -->
+<div class="w-full bg-white px-5 pt-3.5 pb-6 rounded-t-3xl -mt-6 z-40 shadow-[0_-8px_25px_rgba(0,0,0,0.04)] border-t border-slate-100 flex flex-col gap-3.5">
+<!-- Subtle Cute Handle -->
+<div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto"></div>
+<!-- Next Milestone Banner (Prominent & Clear) -->
+<div class="flex items-center justify-between bg-emerald-50/70 border border-emerald-100/90 rounded-2xl p-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-cute">
+<span class="material-symbols-outlined text-[24px]">water_drop</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wide">Next Rest Stop</span>
+<span class="font-extrabold text-slate-900 text-sm">Kamenica Springs</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-extrabold text-emerald-700 bg-white px-2.5 py-1 rounded-full border border-emerald-200/60 shadow-sm">
+              2.8 km away
+            </span>
+<p class="text-[10px] text-slate-500 mt-1 font-semibold">~40 min walk</p>
+</div>
+</div>
+<!-- Squad Walkers Summary Strip -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2.5">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-teal-500 text-white border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">TH</div>
+<div class="w-8 h-8 rounded-full bg-purple-500 text-white border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">EK</div>
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 border-2 border-white flex items-center justify-center text-xs font-bold shadow-sm">+4</div>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-800">Sarajevo Squad (6 walkers)</span>
+<span class="text-[11px] text-slate-500">All nearby within 250m</span>
+</div>
+</div>
+<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">Connected</span>
+</div>
+<!-- Big Friendly Primary Action Buttons -->
+<div class="grid grid-cols-2 gap-2.5 mt-1">
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-cute active:scale-[0.98] transition-all" id="checkInBtn" onclick="triggerCheckIn()">
+<span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+<span>Check In Here</span>
+</button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm active:scale-[0.98] transition-all" id="shareBtn" onclick="shareCuteLocation()">
+<span class="material-symbols-outlined text-[20px] text-slate-600">share_location</span>
+<span>Share Spot</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Friendly Light Mode Bottom Navigation Bar -->
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+<div class="flex justify-around items-center h-18 py-2 px-3 max-w-md mx-auto">
+<!-- Tab 1: Live Map (Active Cute Pill) -->
+<a class="flex flex-col items-center justify-center gap-1 px-3.5 py-1.5 rounded-2xl bg-emerald-50 text-emerald-600 font-bold transition-all" href="#">
+<span class="material-symbols-outlined text-[26px]">map</span>
+<span class="text-[11px] font-bold">Map</span>
+</a>
+<!-- Tab 2: Squad / Team -->
+<a class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">group</span>
+<span class="text-[11px] font-semibold">Squad</span>
+</a>
+<!-- Tab 3: Stages -->
+<a class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">landscape</span>
+<span class="text-[11px] font-semibold">Stages</span>
+</a>
+<!-- Tab 4: Cheerful Friendly SOS/Help -->
+<a class="flex flex-col items-center justify-center gap-1 px-3 py-1.5 text-rose-500 hover:text-rose-600 transition-colors" href="#">
+<div class="relative flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">emergency</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+</div>
+<span class="text-[11px] font-bold text-rose-500">SOS</span>
+</a>
+</div>
+</nav>
+<!-- Interactive Demo Scripts -->
+<script>
+    function inspectPeer(name, distance, details, role) {
+      const modal = document.getElementById('peerDetailModal');
+      const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2);
+      document.getElementById('peerInitials').innerText = initials;
+      document.getElementById('peerName').innerText = name + ' (' + role + ')';
+      document.getElementById('peerStats').innerText = distance + ' • ' + details;
+      modal.classList.remove('hidden');
+    }
+
+    function dismissPeerModal() {
+      document.getElementById('peerDetailModal').classList.add('hidden');
+    }
+
+    function toggleCuteLayer() {
+      const btn = document.getElementById('layerToggleBtn');
+      if (btn.classList.contains('bg-emerald-500')) {
+        btn.classList.remove('bg-emerald-500', 'text-white');
+        btn.classList.add('bg-white', 'text-slate-700');
+      } else {
+        btn.classList.add('bg-emerald-500', 'text-white');
+        btn.classList.remove('bg-white', 'text-slate-700');
+      }
+    }
+
+    function recenterCuteMap() {
+      const btn = event.currentTarget;
+      btn.classList.add('scale-110');
+      setTimeout(() => btn.classList.remove('scale-110'), 200);
+    }
+
+    function triggerCheckIn() {
+      const btn = document.getElementById('checkInBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>Checking In...</span>';
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span><span>Checked In! 🌟</span>';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
+      }, 800);
+    }
+
+    function shareCuteLocation() {
+      const btn = document.getElementById('shareBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[20px] text-emerald-600">done</span><span class="text-emerald-700">Link Copied! 💚</span>';
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+      }, 1800);
+    }
+  </script>
+</body></html>
