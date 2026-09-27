@@ -1,13 +1,14 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle2, Loader2, Sprout } from 'lucide-react';
+import { MarsMiraLogo } from '@/components/MarsMiraLogo';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 export const AuthPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -124,29 +125,30 @@ export const AuthPage = () => {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center p-4 sm:p-6 lg:p-8 bg-radial from-emerald-50/60 to-background">
-      <Card className="w-full max-w-lg shadow-lg border-border/80 backdrop-blur-xs">
-        <CardHeader className="text-center pb-4">
-          <div className="flex justify-center mb-3">
-            <Badge variant="outline" className="px-3 py-1 gap-1.5 rounded-full border-emerald-300 bg-emerald-50/80 text-emerald-800 text-xs font-semibold">
-              <Sprout className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Marš Mira Srebrenica</span>
-            </Badge>
+    <div className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12 bg-radial from-emerald-50/70 via-background to-background">
+      <Card className="w-full max-w-md shadow-xl border-border/80 bg-card rounded-3xl p-6 sm:p-8 space-y-5">
+        <div className="text-center flex flex-col items-center gap-2">
+          <MarsMiraLogo className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl shadow-xs border border-border/40" />
+          <Badge variant="outline" className="px-3 py-0.5 gap-1.5 rounded-full border-emerald-300 bg-emerald-50 text-emerald-800 text-[11px] font-semibold shadow-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Zvanični portal Marša Mira</span>
+          </Badge>
+          <div className="space-y-0.5 mt-0.5">
+            <CardTitle className="text-2xl font-black tracking-tight text-foreground">
+              {activeTab === 'login' ? 'Dobrodošli nazad' : 'Registracija učesnika'}
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+              {activeTab === 'login'
+                ? 'Prijavite se svojim računom za pristup ruti i timu'
+                : 'Kreirajte svoj lični račun za učešće u Maršu Mira'}
+            </CardDescription>
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            {activeTab === 'login' ? 'Dobrodošli nazad' : 'Registracija učesnika'}
-          </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground mt-1">
-            {activeTab === 'login'
-              ? 'Prijavite se svojim računom za pristup ruti i timu'
-              : 'Kreirajte svoj lični račun za učešće u Maršu Mira'}
-          </CardDescription>
-        </CardHeader>
+        </div>
 
-        <CardContent>
+        <CardContent className="p-0 space-y-4">
           {/* Error Message */}
           {errorMessage && (
-            <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700 animate-in fade-in-50">
+            <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3 text-xs sm:text-sm font-medium text-red-700 animate-in fade-in-50">
               <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
               <span>{errorMessage}</span>
             </div>
@@ -154,27 +156,29 @@ export const AuthPage = () => {
 
           {/* Success Message */}
           {successMessage && (
-            <div className="mb-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800 animate-in fade-in-50">
+            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs sm:text-sm font-medium text-emerald-800 animate-in fade-in-50">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
               <span>{successMessage}</span>
             </div>
           )}
 
-          <Tabs value={activeTab} onValueChange={switchTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6 rounded-full p-1 bg-muted">
-              <TabsTrigger value="login" className="rounded-full font-semibold cursor-pointer text-sm">
+          <Tabs value={activeTab} onValueChange={switchTab} className="w-full space-y-4">
+            <TabsList className="grid w-full grid-cols-2 rounded-full p-1 bg-muted/80 border border-border/50">
+              <TabsTrigger value="login" className="rounded-full font-bold cursor-pointer text-xs sm:text-sm py-2">
                 Prijava
               </TabsTrigger>
-              <TabsTrigger value="register" className="rounded-full font-semibold cursor-pointer text-sm">
+              <TabsTrigger value="register" className="rounded-full font-bold cursor-pointer text-xs sm:text-sm py-2">
                 Registracija
               </TabsTrigger>
             </TabsList>
 
             {/* LOGIN FORM */}
-            <TabsContent value="login">
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email adresa</Label>
+            <TabsContent value="login" className="mt-0">
+              <form onSubmit={handleLoginSubmit} className="space-y-3.5">
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-email" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                    Email adresa
+                  </Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -182,12 +186,14 @@ export const AuthPage = () => {
                     placeholder="vas.email@primjer.ba"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    className="rounded-full h-11 px-4"
+                    className="rounded-xl h-11 px-3.5 text-sm"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Lozinka</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-password" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                    Lozinka
+                  </Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -195,14 +201,14 @@ export const AuthPage = () => {
                     placeholder="••••••••"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="rounded-full h-11 px-4"
+                    className="rounded-xl h-11 px-3.5 text-sm"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-600/25 mt-2"
+                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-sm shadow-emerald-600/30 mt-2 transition-all"
                 >
                   {isSubmitting ? (
                     <>
@@ -217,11 +223,13 @@ export const AuthPage = () => {
             </TabsContent>
 
             {/* REGISTER FORM */}
-            <TabsContent value="register">
-              <form onSubmit={handleRegisterSubmit} className="space-y-4">
+            <TabsContent value="register" className="mt-0">
+              <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-first-name">Ime *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-first-name" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Ime *
+                    </Label>
                     <Input
                       id="reg-first-name"
                       type="text"
@@ -229,11 +237,13 @@ export const AuthPage = () => {
                       placeholder="npr. Tarik"
                       value={regFirstName}
                       onChange={(e) => setRegFirstName(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-last-name">Prezime *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-last-name" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Prezime *
+                    </Label>
                     <Input
                       id="reg-last-name"
                       type="text"
@@ -241,13 +251,15 @@ export const AuthPage = () => {
                       placeholder="npr. Hodžić"
                       value={regLastName}
                       onChange={(e) => setRegLastName(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="reg-email">Email adresa *</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="reg-email" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                    Email adresa *
+                  </Label>
                   <Input
                     id="reg-email"
                     type="email"
@@ -255,13 +267,15 @@ export const AuthPage = () => {
                     placeholder="vas.email@primjer.ba"
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    className="rounded-full h-10 px-4"
+                    className="rounded-xl h-10 px-3.5 text-sm"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-country">Država *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-country" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Država *
+                    </Label>
                     <Input
                       id="reg-country"
                       type="text"
@@ -269,11 +283,13 @@ export const AuthPage = () => {
                       placeholder="Bosna i Hercegovina"
                       value={regCountry}
                       onChange={(e) => setRegCountry(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-city">Grad *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-city" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Grad *
+                    </Label>
                     <Input
                       id="reg-city"
                       type="text"
@@ -281,14 +297,16 @@ export const AuthPage = () => {
                       placeholder="Sarajevo"
                       value={regCity}
                       onChange={(e) => setRegCity(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-password">Lozinka (min. 6) *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-password" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Lozinka (min. 6) *
+                    </Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -296,11 +314,13 @@ export const AuthPage = () => {
                       placeholder="••••••••"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-confirm-password">Potvrda lozinke *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-confirm-password" className="text-xs sm:text-sm font-semibold text-foreground/90 block">
+                      Potvrda lozinke *
+                    </Label>
                     <Input
                       id="reg-confirm-password"
                       type="password"
@@ -308,7 +328,7 @@ export const AuthPage = () => {
                       placeholder="••••••••"
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
-                      className="rounded-full h-10 px-4"
+                      className="rounded-xl h-10 px-3.5 text-sm"
                     />
                   </div>
                 </div>
@@ -316,7 +336,7 @@ export const AuthPage = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-600/25 mt-3"
+                  className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-sm shadow-emerald-600/30 mt-2 transition-all"
                 >
                   {isSubmitting ? (
                     <>
@@ -332,15 +352,15 @@ export const AuthPage = () => {
           </Tabs>
         </CardContent>
 
-        <CardFooter className="justify-center border-t border-border/50 pt-4">
-          <p className="text-xs text-muted-foreground text-center">
+        <div className="justify-center border-t border-border/60 pt-4 flex">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center">
             {activeTab === 'login' ? (
               <>
                 Nemate još račun?{' '}
                 <button
                   type="button"
                   onClick={() => switchTab('register')}
-                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-2 ml-1"
+                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-4 ml-1"
                 >
                   Registrujte se besplatno
                 </button>
@@ -351,14 +371,14 @@ export const AuthPage = () => {
                 <button
                   type="button"
                   onClick={() => switchTab('login')}
-                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-2 ml-1"
+                  className="font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer underline underline-offset-4 ml-1"
                 >
                   Prijavite se ovdje
                 </button>
               </>
             )}
           </p>
-        </CardFooter>
+        </div>
       </Card>
     </div>
   );
