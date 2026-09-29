@@ -1,44 +1,14 @@
-import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { GroupCard } from '@/components/GroupCard';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { Users, MapPin, Route, ShieldCheck, UserCheck, Plus, KeyRound, LogOut } from 'lucide-react';
+import { MapPin, Route, ShieldCheck, UserCheck, LogOut, Pencil } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
-  const [teamCode, setTeamCode] = useState('');
-  const [showJoinModal, setShowJoinModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newTeamName, setNewTeamName] = useState('');
-  const [actionNotice, setActionNotice] = useState<string | null>(null);
-
-  const handleJoinSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!teamCode.trim()) return;
-    setActionNotice(`Unesen kod "${teamCode.trim().toUpperCase()}". Funkcionalnost pridruživanja timu stiže na narednom sprintu!`);
-    setShowJoinModal(false);
-    setTeamCode('');
-  };
-
-  const handleCreateSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!newTeamName.trim()) return;
-    setActionNotice(`Tim "${newTeamName.trim()}" će biti aktiviran u narednom koraku.`);
-    setShowCreateModal(false);
-    setNewTeamName('');
-  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-10 sm:py-12 space-y-8 lg:space-y-10">
@@ -79,55 +49,10 @@ export const DashboardPage = () => {
         </div>
       </Card>
 
-      {/* Action Banner / Notification */}
-      {actionNotice && (
-        <div className="flex items-center justify-between rounded-2xl border border-emerald-300 bg-emerald-50/90 p-4 sm:p-5 text-sm font-semibold text-emerald-900 shadow-xs animate-in fade-in-50">
-          <span>ℹ️ {actionNotice}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setActionNotice(null)}
-            className="h-8 w-8 p-0 text-emerald-800 hover:bg-emerald-100 rounded-full cursor-pointer"
-          >
-            ✕
-          </Button>
-        </div>
-      )}
-
       {/* Grid: 3 Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Card 1: Team & Group */}
-        <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
-          <div className="space-y-4">
-            <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-xs">
-              <Users className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-foreground">Grupa i Tim</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-                Učestvujete li sa prijateljima ili organizacijom? Pridružite se grupi pomoću koda ili osnujte novi tim kao vođa.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Button
-              onClick={() => setShowJoinModal(true)}
-              className="flex-1 h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-2 shadow-sm shadow-emerald-600/20"
-            >
-              <KeyRound className="h-4 w-4" />
-              <span>Pridruži se</span>
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setShowCreateModal(true)}
-              className="flex-1 h-11 rounded-full cursor-pointer bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 gap-2 font-semibold"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Kreiraj tim</span>
-            </Button>
-          </div>
-        </Card>
+        <GroupCard />
 
         {/* Card 2: Profile Details */}
         <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
@@ -166,6 +91,13 @@ export const DashboardPage = () => {
                 </span>
               </div>
             </div>
+
+            <Button asChild variant="outline" className="w-full h-11 rounded-full cursor-pointer font-semibold gap-2">
+              <Link to="/profile">
+                <Pencil className="h-4 w-4" />
+                <span>Uredi profil</span>
+              </Link>
+            </Button>
           </div>
 
           <div className="pt-3 border-t border-border/50 text-xs text-muted-foreground flex items-center gap-2">
@@ -215,94 +147,6 @@ export const DashboardPage = () => {
           </div>
         </Card>
       </div>
-
-      {/* Shadcn Dialog: Join Team Modal */}
-      <Dialog open={showJoinModal} onOpenChange={setShowJoinModal}>
-        <DialogContent className="sm:max-w-md p-6 sm:p-8 rounded-3xl space-y-4">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-xl sm:text-2xl font-black">Pridruži se timu</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
-              Unesite 6-cifreni pristupni kod koji vam je dodijelio vođa vašeg tima:
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleJoinSubmit} className="space-y-5 pt-2">
-            <div className="space-y-2">
-              <Label htmlFor="team-code" className="text-sm font-semibold text-foreground/90 block">Kod grupe</Label>
-              <Input
-                id="team-code"
-                type="text"
-                required
-                placeholder="npr. MM-8492"
-                value={teamCode}
-                onChange={(e) => setTeamCode(e.target.value.toUpperCase())}
-                className="h-12 rounded-xl text-center text-lg font-bold tracking-widest uppercase border-border/80 focus-visible:ring-emerald-500/30"
-              />
-            </div>
-
-            <DialogFooter className="gap-2 sm:gap-3 pt-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowJoinModal(false)}
-                className="rounded-full cursor-pointer h-11 px-5"
-              >
-                Odustani
-              </Button>
-              <Button
-                type="submit"
-                className="rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-6 shadow-md shadow-emerald-600/25"
-              >
-                Potvrdi i pridruži se
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Shadcn Dialog: Create Team Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="sm:max-w-md p-6 sm:p-8 rounded-3xl space-y-4">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-xl sm:text-2xl font-black">Kreiraj novu grupu</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
-              Unesite naziv grupe. Kao vođa, dobit ćete jedinstveni kod za poziv ostalih učesnika:
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleCreateSubmit} className="space-y-5 pt-2">
-            <div className="space-y-2">
-              <Label htmlFor="team-name" className="text-sm font-semibold text-foreground/90 block">Naziv grupe</Label>
-              <Input
-                id="team-name"
-                type="text"
-                required
-                placeholder="npr. Tuzlanski planinari"
-                value={newTeamName}
-                onChange={(e) => setNewTeamName(e.target.value)}
-                className="h-12 rounded-xl px-4 text-base border-border/80 focus-visible:ring-emerald-500/30"
-              />
-            </div>
-
-            <DialogFooter className="gap-2 sm:gap-3 pt-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowCreateModal(false)}
-                className="rounded-full cursor-pointer h-11 px-5"
-              >
-                Odustani
-              </Button>
-              <Button
-                type="submit"
-                className="rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-11 px-6 shadow-md shadow-emerald-600/25"
-              >
-                Kreiraj tim
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

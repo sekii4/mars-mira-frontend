@@ -63,6 +63,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  // Poziva se nakon izmjene profila da UI odmah prikaže nove podatke
+  const updateUser = (updated: UserProfile) => {
+    setUser(updated);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -73,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
+        updateUser,
       }}
     >
       {children}
