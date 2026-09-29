@@ -5,6 +5,8 @@ import { Navbar } from './components/Navbar';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/participant/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProfilePage } from './pages/participant/ProfilePage';
+
 import './App.css';
 
 function RootRedirect() {
@@ -27,11 +29,17 @@ export function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/login" element={<Navigate to="/auth" replace />} />
               <Route path="/register" element={<Navigate to="/auth?tab=register" replace />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+              />
               <Route
-                path="/dashboard"
+                path="/profile"
                 element={
                   <ProtectedRoute>
-                    <DashboardPage />
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />
