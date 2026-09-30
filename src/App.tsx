@@ -7,14 +7,19 @@ import { DashboardPage } from './pages/participant/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProfilePage } from './pages/participant/ProfilePage';
 
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+
 import './App.css';
 
 function RootRedirect() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   if (isLoading) {
     return null;
   }
-  return <Navigate to={isAuthenticated ? '/dashboard' : '/auth'} replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+  return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
 }
 
 export function App() {
@@ -29,17 +34,27 @@ export function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/login" element={<Navigate to="/auth" replace />} />
               <Route path="/register" element={<Navigate to="/auth?tab=register" replace />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['participant']}>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
               />
               <Route
                 path="/profile"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['participant']}>
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboardPage />
                   </ProtectedRoute>
                 }
               />

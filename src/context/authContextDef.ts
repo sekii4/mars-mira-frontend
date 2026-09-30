@@ -6,8 +6,8 @@ export interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (data: LoginPayload) => Promise<void>;
-  register: (data: RegisterPayload) => Promise<void>;
+  login: (data: LoginPayload) => Promise<UserProfile>;
+  register: (data: RegisterPayload) => Promise<UserProfile>;
   logout: () => void;
   updateUser: (user: UserProfile) => void;
 }

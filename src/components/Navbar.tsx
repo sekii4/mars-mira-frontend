@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
 import { LogOut, User } from 'lucide-react';
 
@@ -33,19 +32,31 @@ export const Navbar = () => {
       <div className="flex items-center gap-4">
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 sm:gap-4">
-            <Badge variant="secondary" className="hidden sm:flex items-center gap-2 py-1.5 px-4 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-800 border-emerald-200 shadow-xs">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <User className="h-3.5 w-3.5" />
-              <span>{user.first_name} {user.last_name}</span>
-            </Badge>
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-[145px] text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
+            >
+              <Link
+                to={user.role === 'admin' ? '/admin' : '/profile'}
+                title={user.role === 'admin' ? 'Administratorski panel' : 'Uredi profil'}
+              >
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <User className="h-4 w-4 shrink-0 text-emerald-700" />
+                <span className="hidden sm:inline truncate max-w-[130px]">
+                  {user.role === 'admin' ? `Admin: ${user.first_name}` : `${user.first_name} ${user.last_name}`}
+                </span>
+              </Link>
+            </Button>
 
             <Button
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-5 text-sm font-semibold transition-colors"
+              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-[120px] sm:min-w-[145px] text-sm font-semibold transition-colors justify-center gap-2"
             >
-              <LogOut className="h-4 w-4 mr-2" />
+              <LogOut className="h-4 w-4 shrink-0" />
               <span>Odjavi se</span>
             </Button>
           </div>
