@@ -61,11 +61,15 @@ export const AuthPage = () => {
 
     setIsSubmitting(true);
     try {
-      await login({
+      const loggedUser = await login({
         email: loginEmail.trim(),
         password: loginPassword,
       });
-      navigate('/dashboard');
+      if (loggedUser.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { message?: string } } };
       const msg = errorObj.response?.data?.message || 'Greška prilikom prijave. Provjerite podatke i pokušajte ponovo.';

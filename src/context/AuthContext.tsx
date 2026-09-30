@@ -39,22 +39,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
   }, []);
 
-  const login = async (data: LoginPayload) => {
+  const login = async (data: LoginPayload): Promise<UserProfile> => {
     const res = await loginUser(data);
     if (res.token && res.user) {
       localStorage.setItem('mm_token', res.token);
       setToken(res.token);
       setUser(res.user);
     }
+    return res.user;
   };
 
-  const register = async (data: RegisterPayload) => {
+  const register = async (data: RegisterPayload): Promise<UserProfile> => {
     const res = await registerUser(data);
     if (res.token && res.user) {
       localStorage.setItem('mm_token', res.token);
       setToken(res.token);
       setUser(res.user);
     }
+    return res.user;
   };
 
   const logout = () => {
