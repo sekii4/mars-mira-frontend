@@ -139,6 +139,13 @@ export const DashboardPage = () => {
                 </Badge>
               </div>
             </div>
+
+            <Button asChild className="w-full h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-2 shadow-xs">
+              <Link to="/map">
+                <MapPin className="h-4 w-4" />
+                <span>Otvori interaktivnu mapu</span>
+              </Link>
+            </Button>
           </div>
 
           <div className="pt-3 border-t border-border/50 text-xs text-muted-foreground flex items-center gap-2">

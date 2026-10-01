@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Route } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -29,7 +29,21 @@ export const Navbar = () => {
       </Link>
 
       {/* User / Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        {isAuthenticated && (
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="rounded-full h-10 px-3.5 text-sm font-semibold gap-1.5 text-foreground/80 hover:text-foreground hover:bg-emerald-50 cursor-pointer hidden sm:flex"
+          >
+            <Link to="/map">
+              <Route className="h-4 w-4 text-emerald-600" />
+              <span>Trasa i punktovi</span>
+            </Link>
+          </Button>
+        )}
+
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 sm:gap-4">
             <Button
