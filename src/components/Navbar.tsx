@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Route } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -29,14 +29,28 @@ export const Navbar = () => {
       </Link>
 
       {/* User / Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        {isAuthenticated && (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-full border-border/80 hover:border-emerald-300 bg-background/60 hover:bg-emerald-50/80 text-foreground/90 hover:text-emerald-950 h-10 px-4 text-sm font-semibold gap-2 transition-colors shadow-2xs cursor-pointer hidden sm:flex"
+          >
+            <Link to="/map">
+              <Route className="h-4 w-4 text-emerald-600" />
+              <span>Trasa i punktovi</span>
+            </Link>
+          </Button>
+        )}
+
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 sm:gap-4">
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-[145px] text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
+              className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-36.25 text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
             >
               <Link
                 to={user.role === 'admin' ? '/admin' : '/profile'}
@@ -44,7 +58,7 @@ export const Navbar = () => {
               >
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <User className="h-4 w-4 shrink-0 text-emerald-700" />
-                <span className="hidden sm:inline truncate max-w-[130px]">
+                <span className="hidden sm:inline truncate max-w-32.5">
                   {user.role === 'admin' ? `Admin: ${user.first_name}` : `${user.first_name} ${user.last_name}`}
                 </span>
               </Link>
@@ -54,7 +68,7 @@ export const Navbar = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-[120px] sm:min-w-[145px] text-sm font-semibold transition-colors justify-center gap-2"
+              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-30 sm:min-w-36.25 text-sm font-semibold transition-colors justify-center gap-2"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span>Odjavi se</span>
@@ -65,7 +79,7 @@ export const Navbar = () => {
             asChild
             className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
           >
-            <Link to="/auth">Prijavi se</Link>
+            <Link to="/auth" className="text-white font-semibold">Prijavi se</Link>
           </Button>
         )}
       </div>

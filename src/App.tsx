@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProfilePage } from './pages/participant/ProfilePage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { RouteMapPage } from './pages/participant/RouteMapPage';
 
 import './App.css';
 
@@ -58,6 +59,15 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/map"
+                element={
+                  <ProtectedRoute>
+                    <RouteMapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/ruta" element={<Navigate to="/map" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
