@@ -70,7 +70,7 @@ export const DashboardPage = () => {
             <div className="space-y-3.5 pt-2 text-sm">
               <div className="flex justify-between items-center py-2.5 border-b border-border/60">
                 <span className="text-muted-foreground font-medium">Email:</span>
-                <span className="font-semibold text-foreground text-right truncate max-w-[200px]" title={user?.email}>
+                <span className="font-semibold text-foreground text-right truncate max-w-50" title={user?.email}>
                   {user?.email}
                 </span>
               </div>

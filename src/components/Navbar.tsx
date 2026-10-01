@@ -33,9 +33,9 @@ export const Navbar = () => {
         {isAuthenticated && (
           <Button
             asChild
-            variant="ghost"
+            variant="outline"
             size="sm"
-            className="rounded-full h-10 px-3.5 text-sm font-semibold gap-1.5 text-foreground/80 hover:text-foreground hover:bg-emerald-50 cursor-pointer hidden sm:flex"
+            className="rounded-full border-border/80 hover:border-emerald-300 bg-background/60 hover:bg-emerald-50/80 text-foreground/90 hover:text-emerald-950 h-10 px-4 text-sm font-semibold gap-2 transition-colors shadow-2xs cursor-pointer hidden sm:flex"
           >
             <Link to="/map">
               <Route className="h-4 w-4 text-emerald-600" />
@@ -50,7 +50,7 @@ export const Navbar = () => {
               asChild
               variant="outline"
               size="sm"
-              className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-[145px] text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
+              className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-36.25 text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
             >
               <Link
                 to={user.role === 'admin' ? '/admin' : '/profile'}
@@ -58,7 +58,7 @@ export const Navbar = () => {
               >
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <User className="h-4 w-4 shrink-0 text-emerald-700" />
-                <span className="hidden sm:inline truncate max-w-[130px]">
+                <span className="hidden sm:inline truncate max-w-32.5">
                   {user.role === 'admin' ? `Admin: ${user.first_name}` : `${user.first_name} ${user.last_name}`}
                 </span>
               </Link>
@@ -68,7 +68,7 @@ export const Navbar = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-[120px] sm:min-w-[145px] text-sm font-semibold transition-colors justify-center gap-2"
+              className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-30 sm:min-w-36.25 text-sm font-semibold transition-colors justify-center gap-2"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               <span>Odjavi se</span>
@@ -77,9 +77,9 @@ export const Navbar = () => {
         ) : (
           <Button
             asChild
-            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
+            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 !text-white text-white shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
           >
-            <Link to="/auth">Prijavi se</Link>
+            <Link to="/auth" className="!text-white text-white font-semibold">Prijavi se</Link>
           </Button>
         )}
       </div>

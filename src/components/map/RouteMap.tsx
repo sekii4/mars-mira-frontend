@@ -253,7 +253,7 @@ export const RouteMap = ({
       <div ref={mapContainerRef} className="h-full w-full z-0" />
 
       {/* Floating Map Controls */}
-      <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2">
+      <div className="absolute top-4 right-4 z-400 flex flex-col gap-2">
         <Button
           type="button"
           size="sm"
@@ -280,7 +280,7 @@ export const RouteMap = ({
       </div>
 
       {/* Map Legend */}
-      <div className="absolute bottom-4 left-4 z-[400] bg-white/95 backdrop-blur-md rounded-2xl border border-border/70 p-3 shadow-lg hidden sm:flex flex-col gap-2 text-xs">
+      <div className="absolute bottom-4 left-4 z-400 bg-white/95 backdrop-blur-md rounded-2xl border border-border/70 p-3 shadow-lg hidden sm:flex flex-col gap-2 text-xs">
         <div className="font-bold text-slate-900 text-[11px] uppercase tracking-wider">Legenda rute</div>
         <div className="flex items-center gap-3">
           {stages.length > 0 ? (

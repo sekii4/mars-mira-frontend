@@ -169,7 +169,7 @@ export const RouteMapPage = () => {
 
       {/* Main Map + Checkpoints Layout */}
       {isLoading ? (
-        <Card className="h-[600px] flex items-center justify-center rounded-3xl border-border">
+        <Card className="h-150 flex items-center justify-center rounded-3xl border-border">
           <div className="flex flex-col items-center gap-3 text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
             <span className="font-semibold text-sm">Učitavanje rute i punktova...</span>
@@ -183,7 +183,7 @@ export const RouteMapPage = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Map Column (8 cols on large screens) */}
-          <div className="lg:col-span-8 h-[550px] sm:h-[650px] w-full">
+          <div className="lg:col-span-8 h-137.5 sm:h-162.5 w-full">
             <RouteMap
               stages={stages}
               checkpoints={checkpoints}
@@ -196,7 +196,7 @@ export const RouteMapPage = () => {
           </div>
 
           {/* Checkpoints Sidebar Column (4 cols on large screens) */}
-          <Card className="lg:col-span-4 h-[550px] sm:h-[650px] flex flex-col rounded-3xl border-border p-5 sm:p-6 shadow-sm overflow-hidden [--card-spacing:0]">
+          <Card className="lg:col-span-4 h-137.5 sm:h-162.5 flex flex-col rounded-3xl border-border p-5 sm:p-6 shadow-sm overflow-hidden [--card-spacing:0]">
             <div className="pb-4 border-b border-border/70 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-foreground text-base sm:text-lg">
