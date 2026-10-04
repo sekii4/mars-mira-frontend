@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Checkpoint, RoutePoint, Stage } from '@/api/route';
+import type { GroupMemberLocation } from '@/api/location';
+import type { LatLng } from '@/hooks/useGeolocation';
 import { Button } from '@/components/ui/button';
 import { Layers, RotateCcw } from 'lucide-react';
 
@@ -13,6 +15,9 @@ interface RouteMapProps {
   selectedCheckpointId: number | null;
   onSelectCheckpoint?: (checkpoint: Checkpoint) => void;
   className?: string;
+  // Live praćenje tokom marša - oboje opciono, mapa radi isto kao prije i bez njih
+  ownLocation?: LatLng | null;
+  groupLocations?: GroupMemberLocation[];
 }
 
 const STAGE_COLORS: Record<number, string> = {
@@ -29,12 +34,15 @@ export const RouteMap = ({
   selectedCheckpointId,
   onSelectCheckpoint,
   className = 'h-full w-full',
+  ownLocation = null,
+  groupLocations = [],
 }: RouteMapProps) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const polylinesLayerRef = useRef<L.LayerGroup | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const markersMapRef = useRef<Map<number, L.Marker>>(new Map());
+  const liveLayerRef = useRef<L.LayerGroup | null>(null);
 
   const [mapType, setMapType] = useState<'osm' | 'topo'>('osm');
   const baseTileLayerRef = useRef<L.TileLayer | null>(null);
@@ -106,6 +114,7 @@ export const RouteMap = ({
 
     polylinesLayerRef.current = L.layerGroup().addTo(map);
     markersLayerRef.current = L.layerGroup().addTo(map);
+    liveLayerRef.current = L.layerGroup().addTo(map);
 
     mapInstanceRef.current = map;
 
@@ -233,6 +242,64 @@ export const RouteMap = ({
       marker.openPopup();
     }
   }, [selectedCheckpointId]);
+
+  // 5. Live markeri: vlastita lokacija + lokacije članova grupe (nezavisno od rute/punktova,
+  // da česta GPS ažuriranja ne ponovo iscrtavaju cijelu rutu)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !liveLayerRef.current) return;
+
+    liveLayerRef.current.clearLayers();
+
+    if (ownLocation) {
+      const ownIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `
+          <div class="relative flex items-center justify-center">
+            <span class="absolute w-5 h-5 bg-sky-400/50 rounded-full animate-ping"></span>
+            <div class="relative w-4 h-4 rounded-full bg-sky-600 border-2 border-white shadow-md"></div>
+          </div>
+        `,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+      });
+
+      L.marker([ownLocation.latitude, ownLocation.longitude], {
+        icon: ownIcon,
+        zIndexOffset: 2000,
+      })
+        .bindPopup('<div style="font-size:12px;font-weight:700;">Vaša lokacija</div>')
+        .addTo(liveLayerRef.current);
+    }
+
+    groupLocations.forEach((member) => {
+      const initials = `${member.first_name?.[0] ?? ''}${member.last_name?.[0] ?? ''}`.toUpperCase();
+      const memberIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white bg-indigo-600 border-2 border-white shadow-md">
+            ${initials}
+          </div>
+        `,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
+
+      const recordedAt = new Date(member.recorded_at).toLocaleTimeString('bs-BA', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      L.marker([member.latitude, member.longitude], {
+        icon: memberIcon,
+        zIndexOffset: 1500,
+      })
+        .bindPopup(
+          `<div style="font-size:12px;"><strong>${member.first_name} ${member.last_name}</strong><br/>Ažurirano: ${recordedAt}</div>`
+        )
+        .addTo(liveLayerRef.current!);
+    });
+  }, [ownLocation, groupLocations]);
 
   const handleResetView = () => {
     if (!mapInstanceRef.current) return;
