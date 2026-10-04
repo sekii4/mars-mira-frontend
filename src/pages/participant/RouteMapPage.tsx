@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { getRoute, type Checkpoint, type RoutePoint, type Stage } from '@/api/route';
+import { getGroupLocations, type GroupMemberLocation } from '@/api/location';
+import type { MarchStatus } from '@/api/participation';
+import type { LatLng } from '@/hooks/useGeolocation';
 import { RouteMap } from '@/components/map/RouteMap';
+import { StartFinishButton } from '@/components/StartFinishButton';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +31,10 @@ export const RouteMapPage = () => {
   const [selectedStageDay, setSelectedStageDay] = useState<number | null>(null);
   const [selectedCheckpointId, setSelectedCheckpointId] = useState<number | null>(null);
 
+  const [marchStatus, setMarchStatus] = useState<MarchStatus>('registered');
+  const [ownLocation, setOwnLocation] = useState<LatLng | null>(null);
+  const [groupLocations, setGroupLocations] = useState<GroupMemberLocation[]>([]);
+
   useEffect(() => {
     const fetchRouteData = async () => {
       try {
@@ -44,6 +52,34 @@ export const RouteMapPage = () => {
 
     fetchRouteData();
   }, []);
+
+  // Status se mijenja iz StartFinishButton-a; kad marš više nije aktivan, očisti prikaz grupe
+  const handleStatusChange = (status: MarchStatus) => {
+    setMarchStatus(status);
+    if (status !== 'active') {
+      setGroupLocations([]);
+    }
+  };
+
+  // Dok je marš aktivan, periodično povuci najnovije lokacije članova grupe
+  useEffect(() => {
+    if (marchStatus !== 'active') {
+      return;
+    }
+
+    const fetchGroupLocations = async () => {
+      try {
+        const res = await getGroupLocations();
+        setGroupLocations(res.locations);
+      } catch {
+        // Tiho preskoči - mapa i dalje prikazuje zadnje poznato stanje
+      }
+    };
+
+    fetchGroupLocations();
+    const intervalId = setInterval(fetchGroupLocations, 20000);
+    return () => clearInterval(intervalId);
+  }, [marchStatus]);
 
   const filteredCheckpoints = selectedStageDay
     ? checkpoints.filter((cp) => cp.stage_day === selectedStageDay)
@@ -82,6 +118,12 @@ export const RouteMapPage = () => {
           <p className="text-sm text-emerald-100/80 max-w-2xl leading-relaxed">
             Historijska trasa duga ~100 kilometara od Nezuka do Memorijalnog centra Potočari podijeljena u tri etape sa označenim punktovima.
           </p>
+          <div className="pt-1">
+            <StartFinishButton
+              onStatusChange={handleStatusChange}
+              onPositionChange={setOwnLocation}
+            />
+          </div>
         </div>
 
         <div className="flex items-center gap-3 z-10 self-start md:self-center shrink-0">
@@ -192,6 +234,8 @@ export const RouteMapPage = () => {
               selectedCheckpointId={selectedCheckpointId}
               onSelectCheckpoint={(cp) => setSelectedCheckpointId(cp.cid)}
               className="h-full w-full"
+              ownLocation={ownLocation}
+              groupLocations={groupLocations}
             />
           </div>
 
