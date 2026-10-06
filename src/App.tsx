@@ -9,6 +9,8 @@ import { ProfilePage } from './pages/participant/ProfilePage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { RouteMapPage } from './pages/participant/RouteMapPage';
+import { GroupsPage } from './pages/admin/GroupsPage';
+import { ParticipantsPage } from './pages/admin/ParticipantsPage';
 
 import './App.css';
 
@@ -56,6 +58,22 @@ export function App() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/participants"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <ParticipantsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/groups"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <GroupsPage />
                   </ProtectedRoute>
                 }
               />

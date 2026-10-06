@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,9 +80,11 @@ export const AdminDashboardPage = () => {
             <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" /> Baza aktivna
             </span>
-            <Button variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
-              <span>Pregled</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+            <Button asChild variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
+              <Link to="/admin/participants">
+                <span>Pregled</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </Button>
           </div>
         </Card>
@@ -105,9 +108,11 @@ export const AdminDashboardPage = () => {
             <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" /> Sistem kodova aktivan
             </span>
-            <Button variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
-              <span>Upravljanje</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+            <Button asChild variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
+              <Link to="/admin/groups">
+                <span>Upravljanje</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </Button>
           </div>
         </Card>
