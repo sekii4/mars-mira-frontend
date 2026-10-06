@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Checkpoint, RoutePoint, Stage } from '@/api/route';
@@ -16,7 +16,7 @@ interface RouteMapProps {
   selectedCheckpointId: number | null;
   onSelectCheckpoint?: (checkpoint: Checkpoint) => void;
   className?: string;
-  // Live praćenje tokom marša - oboje opciono, mapa radi isto kao prije i bez njih
+  // Live praćenje tokom marša
   ownLocation?: LatLng | null;
   groupLocations?: GroupMemberLocation[];
   visits?: CheckpointVisit[];
@@ -46,9 +46,10 @@ export const RouteMap = ({
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const markersMapRef = useRef<Map<number, L.Marker>>(new Map());
   const liveLayerRef = useRef<L.LayerGroup | null>(null);
+  const baseTileLayerRef = useRef<L.TileLayer | null>(null);
 
   const [mapType, setMapType] = useState<'osm' | 'topo'>('osm');
-  const baseTileLayerRef = useRef<L.TileLayer | null>(null);
+  const hasInitialFitRef = useRef(false);
 
   // Helper to create branded DivIcon for each checkpoint type
   const createMarkerIcon = (cp: Checkpoint, isSelected: boolean, isVisited = false) => {
@@ -99,7 +100,7 @@ export const RouteMap = ({
     });
   };
 
-  // 1. Initialize Map
+  // 1. Initialize Map and ResizeObserver
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
@@ -108,12 +109,16 @@ export const RouteMap = ({
       center: [44.318, 19.135],
       zoom: 11,
       zoomControl: false,
+      scrollWheelZoom: true,
+      preferCanvas: true,
     });
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
+      maxNativeZoom: 19,
+      subdomains: ['a', 'b', 'c'],
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
@@ -126,25 +131,40 @@ export const RouteMap = ({
 
     mapInstanceRef.current = map;
 
+    // Invalidate size on container resize to guarantee zero gray blocks
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize({ debounceMoveend: true });
+    });
+    resizeObserver.observe(mapContainerRef.current);
+
+    // Initial size invalidations to ensure proper tiling as flex/grid finishes reflow
+    const t1 = setTimeout(() => map.invalidateSize(), 100);
+    const t2 = setTimeout(() => map.invalidateSize(), 400);
+
     return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
     };
   }, []);
 
-  // 2. Handle Map Type switch (OSM vs Topo)
+  // 2. Handle Map Type switch (OSM vs Topo) with safe maxNativeZoom
   useEffect(() => {
     if (!mapInstanceRef.current || !baseTileLayerRef.current) return;
 
-    const url =
-      mapType === 'topo'
-        ? 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-    baseTileLayerRef.current.setUrl(url);
+    if (mapType === 'topo') {
+      baseTileLayerRef.current.setUrl('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png');
+      baseTileLayerRef.current.options.maxNativeZoom = 17; // Prevents missing gray tiles above zoom 17
+    } else {
+      baseTileLayerRef.current.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+      baseTileLayerRef.current.options.maxNativeZoom = 19;
+    }
   }, [mapType]);
 
   // 3. Render Route Polylines and Checkpoint Markers
+  // (Notice: does NOT call fitBounds on every re-render, preserving user manual zoom!)
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !polylinesLayerRef.current || !markersLayerRef.current) return;
@@ -232,9 +252,7 @@ export const RouteMap = ({
       marker.bindPopup(popupContent);
 
       marker.on('click', () => {
-        if (onSelectCheckpoint) {
-          onSelectCheckpoint(cp);
-        }
+        onSelectCheckpoint?.(cp);
       });
 
       marker.addTo(markersLayerRef.current!);
@@ -242,25 +260,42 @@ export const RouteMap = ({
       bounds.extend([cp.lat, cp.long]);
     });
 
-    // Fit bounds if we have valid coordinates
+    // Fit bounds ONLY ON INITIAL LOAD of points
+    if (!hasInitialFitRef.current && bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+      hasInitialFitRef.current = true;
+    }
+  }, [points, checkpoints, selectedStageDay, selectedCheckpointId, visits, onSelectCheckpoint]);
+
+  // 4. Viewport adjustment when user explicitly switches Stage Filter
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !hasInitialFitRef.current) return;
+
+    const bounds = L.latLngBounds([]);
+    points.forEach((pt) => {
+      if (!selectedStageDay || selectedStageDay === pt.stage_day) {
+        bounds.extend([pt.lat, pt.long]);
+      }
+    });
+
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
     }
-  }, [points, checkpoints, selectedStageDay, selectedCheckpointId, onSelectCheckpoint, visits]);
+  }, [selectedStageDay, points]);
 
-  // 4. Focus on selected checkpoint
+  // 5. Smooth flyTo focus when a checkpoint is selected (without snapping to full bounds)
   useEffect(() => {
     if (!selectedCheckpointId || !mapInstanceRef.current) return;
     const marker = markersMapRef.current.get(selectedCheckpointId);
     if (marker) {
       const latLng = marker.getLatLng();
-      mapInstanceRef.current.flyTo(latLng, 14, { duration: 1.2 });
+      mapInstanceRef.current.flyTo(latLng, 14, { duration: 1.0 });
       marker.openPopup();
     }
   }, [selectedCheckpointId]);
 
-  // 5. Live markeri: vlastita lokacija + lokacije članova grupe (nezavisno od rute/punktova,
-  // da česta GPS ažuriranja ne ponovo iscrtavaju cijelu rutu)
+  // 6. Live markers: own location + group locations
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !liveLayerRef.current) return;
@@ -317,7 +352,7 @@ export const RouteMap = ({
     });
   }, [ownLocation, groupLocations]);
 
-  const handleResetView = () => {
+  const handleResetView = useCallback(() => {
     if (!mapInstanceRef.current) return;
     const bounds = L.latLngBounds([]);
     points.forEach((pt) => {
@@ -328,7 +363,7 @@ export const RouteMap = ({
     if (bounds.isValid()) {
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
     }
-  };
+  }, [points, selectedStageDay]);
 
   return (
     <div className={`relative ${className} overflow-hidden rounded-3xl border border-border/80 shadow-md bg-muted/20`}>
@@ -336,13 +371,13 @@ export const RouteMap = ({
       <div ref={mapContainerRef} className="h-full w-full z-0" />
 
       {/* Floating Map Controls */}
-      <div className="absolute top-4 right-4 z-400 flex flex-col gap-2">
+      <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
         <Button
           type="button"
           size="sm"
           variant="outline"
           onClick={() => setMapType((prev) => (prev === 'osm' ? 'topo' : 'osm'))}
-          className="rounded-full bg-white/95 backdrop-blur-md shadow-md hover:bg-white text-slate-800 text-xs font-semibold gap-1.5 h-9 px-3 border-border"
+          className="rounded-full bg-white/95 backdrop-blur-md shadow-md hover:bg-white text-slate-800 text-xs font-semibold gap-1.5 h-9 px-3 border-border cursor-pointer"
           title="Promijeni sloj karte"
         >
           <Layers className="h-3.5 w-3.5 text-emerald-600" />
@@ -354,7 +389,7 @@ export const RouteMap = ({
           size="sm"
           variant="outline"
           onClick={handleResetView}
-          className="rounded-full bg-white/95 backdrop-blur-md shadow-md hover:bg-white text-slate-800 text-xs font-semibold gap-1.5 h-9 px-3 border-border"
+          className="rounded-full bg-white/95 backdrop-blur-md shadow-md hover:bg-white text-slate-800 text-xs font-semibold gap-1.5 h-9 px-3 border-border cursor-pointer"
           title="Centriraj rutu"
         >
           <RotateCcw className="h-3.5 w-3.5 text-emerald-600" />
@@ -363,7 +398,7 @@ export const RouteMap = ({
       </div>
 
       {/* Map Legend */}
-      <div className="absolute bottom-4 left-4 z-400 bg-white/95 backdrop-blur-md rounded-2xl border border-border/70 p-3 shadow-lg hidden sm:flex flex-col gap-2 text-xs">
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-md rounded-2xl border border-border/70 p-3 shadow-lg hidden sm:flex flex-col gap-2 text-xs">
         <div className="font-bold text-slate-900 text-[11px] uppercase tracking-wider">Legenda rute</div>
         <div className="flex items-center gap-3">
           {stages.length > 0 ? (
