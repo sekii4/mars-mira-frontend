@@ -13,6 +13,14 @@ export interface SendLocationResponse {
     longitude: number;
     recorded_at: string;
   };
+  new_visits?: Array<{
+    checkpoint_id: number;
+    name: string;
+    type: string;
+    stage_day: number;
+    distance_meters: number;
+    reached_at: string;
+  }>;
 }
 
 export const sendLocation = async (data: SendLocationPayload): Promise<SendLocationResponse> => {

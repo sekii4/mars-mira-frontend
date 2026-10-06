@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Checkpoint, RoutePoint, Stage } from '@/api/route';
 import type { GroupMemberLocation } from '@/api/location';
+import type { CheckpointVisit } from '@/api/checkpoint';
 import type { LatLng } from '@/hooks/useGeolocation';
 import { Button } from '@/components/ui/button';
 import { Layers, RotateCcw } from 'lucide-react';
@@ -18,6 +19,7 @@ interface RouteMapProps {
   // Live praćenje tokom marša - oboje opciono, mapa radi isto kao prije i bez njih
   ownLocation?: LatLng | null;
   groupLocations?: GroupMemberLocation[];
+  visits?: CheckpointVisit[];
 }
 
 const STAGE_COLORS: Record<number, string> = {
@@ -36,6 +38,7 @@ export const RouteMap = ({
   className = 'h-full w-full',
   ownLocation = null,
   groupLocations = [],
+  visits = [],
 }: RouteMapProps) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -48,7 +51,7 @@ export const RouteMap = ({
   const baseTileLayerRef = useRef<L.TileLayer | null>(null);
 
   // Helper to create branded DivIcon for each checkpoint type
-  const createMarkerIcon = (cp: Checkpoint, isSelected: boolean) => {
+  const createMarkerIcon = (cp: Checkpoint, isSelected: boolean, isVisited = false) => {
     let bgClass = 'bg-emerald-600 text-white border-white';
     let label = '📍';
 
@@ -78,6 +81,11 @@ export const RouteMap = ({
           <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${bgClass}">
             <span>${label}</span>
           </div>
+          ${
+            isVisited
+              ? '<span class="absolute -top-1.5 -left-1.5 w-4 h-4 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[9px] font-black border border-white shadow-sm ring-1 ring-emerald-300">✓</span>'
+              : ''
+          }
           ${
             isSelected
               ? '<span class="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping"></span>'
@@ -185,9 +193,12 @@ export const RouteMap = ({
       const isVisibleStage = !selectedStageDay || selectedStageDay === cp.stage_day;
       if (!isVisibleStage) return;
 
+      const visit = visits.find((v) => v.checkpoint_id === cp.cid);
+      const isVisited = Boolean(visit);
       const isSelected = selectedCheckpointId === cp.cid;
+
       const marker = L.marker([cp.lat, cp.long], {
-        icon: createMarkerIcon(cp, isSelected),
+        icon: createMarkerIcon(cp, isSelected, isVisited),
         zIndexOffset: isSelected ? 1000 : 0,
       });
 
@@ -202,14 +213,19 @@ export const RouteMap = ({
           ? '<span style="background:#F0F9FF;color:#0369A1;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;">OKREPA & VODA</span>'
           : '<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;">CILJ</span>';
 
+      const visitBadge = isVisited && visit
+        ? `<div style="margin-top: 8px; padding: 4px 8px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 8px; color: #065F46; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"><span>✓</span> Prošao: ${new Date(visit.reached_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`
+        : `<div style="margin-top: 8px; padding: 4px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; color: #64748B; font-size: 11px; font-weight: 600; display: inline-block;">Status: Predstoji</div>`;
+
       const popupContent = `
-        <div style="font-family: inherit; min-width: 200px; padding: 4px;">
+        <div style="font-family: inherit; min-width: 210px; padding: 4px;">
           <div style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
             ${typeBadge}
             <span style="font-size: 11px; font-weight: 600; color: #64748B;">Etapa ${cp.stage_day}. dan</span>
           </div>
           <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: #0F172A;">${cp.name}</h4>
-          <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.4;">${cp.description}</p>
+          <p style="margin: 0 0 4px 0; font-size: 12px; color: #475569; line-height: 1.4;">${cp.description}</p>
+          ${visitBadge}
         </div>
       `;
 
@@ -230,7 +246,7 @@ export const RouteMap = ({
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
     }
-  }, [points, checkpoints, selectedStageDay, selectedCheckpointId, onSelectCheckpoint]);
+  }, [points, checkpoints, selectedStageDay, selectedCheckpointId, onSelectCheckpoint, visits]);
 
   // 4. Focus on selected checkpoint
   useEffect(() => {
