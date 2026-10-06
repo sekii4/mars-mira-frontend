@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getRoute, type Checkpoint, type RoutePoint, type Stage } from '@/api/route';
 import { getGroupLocations, type GroupMemberLocation } from '@/api/location';
 import {
@@ -121,6 +121,10 @@ export const RouteMapPage = () => {
       setIsCheckingIn(null);
     }
   };
+
+  const handleSelectCheckpoint = useCallback((cp: Checkpoint) => {
+    setSelectedCheckpointId(cp.cid);
+  }, []);
 
   // Dok je marš aktivan, periodično povuci najnovije lokacije članova grupe i napredak
   useEffect(() => {
@@ -336,14 +340,14 @@ export const RouteMapPage = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Map Column (8 cols on large screens) */}
-          <div className="lg:col-span-8 h-137.5 sm:h-162.5 w-full">
+          <div className="lg:col-span-8 h-[520px] sm:h-[620px] lg:h-[680px] w-full">
             <RouteMap
               stages={stages}
               checkpoints={checkpoints}
               points={points}
               selectedStageDay={selectedStageDay}
               selectedCheckpointId={selectedCheckpointId}
-              onSelectCheckpoint={(cp) => setSelectedCheckpointId(cp.cid)}
+              onSelectCheckpoint={handleSelectCheckpoint}
               className="h-full w-full"
               ownLocation={ownLocation}
               groupLocations={groupLocations}
@@ -352,7 +356,7 @@ export const RouteMapPage = () => {
           </div>
 
           {/* Checkpoints Sidebar Column (4 cols on large screens) */}
-          <Card className="lg:col-span-4 h-137.5 sm:h-162.5 flex flex-col rounded-3xl border-border p-5 sm:p-6 shadow-sm overflow-hidden [--card-spacing:0]">
+          <Card className="lg:col-span-4 h-[520px] sm:h-[620px] lg:h-[680px] flex flex-col rounded-3xl border-border p-5 sm:p-6 shadow-sm overflow-hidden [--card-spacing:0]">
             <div className="pb-4 border-b border-border/70 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-foreground text-base sm:text-lg">
