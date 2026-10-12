@@ -63,6 +63,15 @@ export function App() {
                 }
               />
               <Route
+                path="/admin/statistics"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/admin/stats" element={<Navigate to="/admin" replace />} />
+              <Route
                 path="/admin/participants"
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
