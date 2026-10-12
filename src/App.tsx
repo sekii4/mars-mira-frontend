@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProfilePage } from './pages/participant/ProfilePage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminRoutePage } from './pages/admin/AdminRoutePage';
 import { RouteMapPage } from './pages/participant/RouteMapPage';
 import { GroupsPage } from './pages/admin/GroupsPage';
 import { ParticipantsPage } from './pages/admin/ParticipantsPage';
@@ -74,6 +75,14 @@ export function App() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <GroupsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/route"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminRoutePage />
                   </ProtectedRoute>
                 }
               />
