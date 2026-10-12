@@ -231,7 +231,7 @@ export const SettingsPage = () => {
                     <span className="font-bold text-sm text-foreground">{t('lang_bs')}</span>
                     {language === 'bs' && (
                       <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                        <Check className="h-3 w-3 stroke-[3]" />
+                        <Check className="h-3 w-3 stroke-3" />
                       </span>
                     )}
                   </div>
@@ -257,7 +257,7 @@ export const SettingsPage = () => {
                     <span className="font-bold text-sm text-foreground">{t('lang_en')}</span>
                     {language === 'en' && (
                       <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                        <Check className="h-3 w-3 stroke-[3]" />
+                        <Check className="h-3 w-3 stroke-3" />
                       </span>
                     )}
                   </div>
@@ -293,7 +293,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'light' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>
@@ -317,7 +317,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'dark' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>
@@ -341,7 +341,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'system' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>
@@ -458,7 +458,7 @@ export const SettingsPage = () => {
                       <span className="font-bold text-base text-foreground">{t('lang_bs')}</span>
                       {language === 'bs' && (
                         <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                          <Check className="h-3 w-3 stroke-[3]" />
+                          <Check className="h-3 w-3 stroke-3" />
                         </span>
                       )}
                     </div>
@@ -483,7 +483,7 @@ export const SettingsPage = () => {
                       <span className="font-bold text-base text-foreground">{t('lang_en')}</span>
                       {language === 'en' && (
                         <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                          <Check className="h-3 w-3 stroke-[3]" />
+                          <Check className="h-3 w-3 stroke-3" />
                         </span>
                       )}
                     </div>
@@ -521,7 +521,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'light' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>
@@ -544,7 +544,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'dark' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>
@@ -567,7 +567,7 @@ export const SettingsPage = () => {
                   </div>
                   {theme === 'system' && (
                     <span className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3 stroke-[3]" />
+                      <Check className="h-3 w-3 stroke-3" />
                     </span>
                   )}
                 </div>

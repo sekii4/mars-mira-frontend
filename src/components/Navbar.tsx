@@ -106,9 +106,9 @@ export const Navbar = () => {
         ) : (
           <Button
             asChild
-            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 !text-white shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
+            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 text-white! shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
           >
-            <Link to="/auth" className="!text-white font-semibold">{t('nav_login')}</Link>
+            <Link to="/auth" className="text-white! font-semibold">{t('nav_login')}</Link>
           </Button>
         )}
       </div>
