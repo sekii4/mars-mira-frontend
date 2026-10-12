@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Layers,
   ArrowRight,
+  MapPinned,
 } from 'lucide-react';
 
 export const AdminDashboardPage = () => {
@@ -60,7 +61,7 @@ export const AdminDashboardPage = () => {
       </Card>
 
       {/* Admin Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
           <div className="space-y-4">
             <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-xs">
@@ -111,6 +112,34 @@ export const AdminDashboardPage = () => {
             <Button asChild variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
               <Link to="/admin/groups">
                 <span>Upravljanje</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
+          <div className="space-y-4">
+            <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-xs">
+              <MapPinned className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Ruta
+              </div>
+              <h3 className="text-2xl font-black text-foreground mt-1">Punktovi na ruti</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+                Dodavanje i uređivanje punktova (kamp, voda, prva pomoć...) direktno na mapi. Ruta je fiksna.
+              </p>
+            </div>
+          </div>
+          <div className="pt-4 border-t border-border/60 flex items-center justify-between">
+            <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" /> Ruta učitana
+            </span>
+            <Button asChild variant="ghost" size="sm" className="rounded-full gap-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-50">
+              <Link to="/admin/route">
+                <span>Uredi</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Button>
