@@ -8,6 +8,9 @@ export interface UserProfile {
   role: 'participant' | 'admin';
   country?: string;
   city?: string;
+  location_sharing?: boolean;
+  theme?: 'light' | 'dark' | 'system';
+  language?: 'bs' | 'en';
 }
 
 export interface RegisterPayload {

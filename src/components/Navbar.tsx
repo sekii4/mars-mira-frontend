@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User, Route, BarChart3 } from 'lucide-react';
+import { LogOut, User, Route, BarChart3, Settings } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -29,7 +31,7 @@ export const Navbar = () => {
       </Link>
 
       {/* User / Actions */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2.5 sm:gap-4">
         {isAuthenticated && user?.role === 'admin' && (
           <Button
             asChild
@@ -39,7 +41,7 @@ export const Navbar = () => {
           >
             <Link to="/admin">
               <BarChart3 className="h-4 w-4 text-emerald-600" />
-              <span>Statistika</span>
+              <span>{t('nav_stats')}</span>
             </Link>
           </Button>
         )}
@@ -53,10 +55,23 @@ export const Navbar = () => {
           >
             <Link to="/map">
               <Route className="h-4 w-4 text-emerald-600" />
-              <span>Trasa i punktovi</span>
+              <span>{t('nav_route')}</span>
             </Link>
           </Button>
         )}
+
+        {/* Settings button */}
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="rounded-full border-border/80 hover:border-emerald-300 bg-background/60 hover:bg-emerald-50/80 text-foreground/90 hover:text-emerald-950 h-10 px-3 sm:px-4 text-sm font-semibold gap-2 transition-colors shadow-2xs cursor-pointer"
+        >
+          <Link to="/settings" title={t('nav_settings')}>
+            <Settings className="h-4 w-4 text-emerald-600" />
+            <span className="hidden md:inline">{t('nav_settings')}</span>
+          </Link>
+        </Button>
 
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 sm:gap-4">
@@ -85,15 +100,15 @@ export const Navbar = () => {
               className="cursor-pointer rounded-full border-border hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 h-10 px-4 min-w-30 sm:min-w-36.25 text-sm font-semibold transition-colors justify-center gap-2"
             >
               <LogOut className="h-4 w-4 shrink-0" />
-              <span>Odjavi se</span>
+              <span>{t('nav_logout')}</span>
             </Button>
           </div>
         ) : (
           <Button
             asChild
-            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 !text-white shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
+            className="cursor-pointer rounded-full bg-emerald-600 hover:bg-emerald-700 text-white! shadow-sm shadow-emerald-600/30 h-10 px-6 font-semibold"
           >
-            <Link to="/auth" className="!text-white font-semibold">Prijavi se</Link>
+            <Link to="/auth" className="text-white! font-semibold">{t('nav_login')}</Link>
           </Button>
         )}
       </div>

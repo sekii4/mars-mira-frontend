@@ -1,11 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { useAuth } from './hooks/useAuth';
 import { Navbar } from './components/Navbar';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/participant/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProfilePage } from './pages/participant/ProfilePage';
+import { SettingsPage } from './pages/SettingsPage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminRoutePage } from './pages/admin/AdminRoutePage';
@@ -28,11 +31,13 @@ function RootRedirect() {
 
 export function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div className="min-h-screen flex flex-col w-full bg-background text-foreground">
-          <Navbar />
-          <main className="flex-1 flex flex-col w-full">
+    <ThemeProvider>
+      <LanguageProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <div className="min-h-screen flex flex-col w-full bg-background text-foreground">
+              <Navbar />
+              <main className="flex-1 flex flex-col w-full">
             <Routes>
               <Route path="/" element={<RootRedirect />} />
               <Route path="/auth" element={<AuthPage />} />
@@ -103,6 +108,8 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/postavke" element={<Navigate to="/settings" replace />} />
               <Route path="/ruta" element={<Navigate to="/map" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -110,7 +117,10 @@ export function App() {
         </div>
       </AuthProvider>
     </BrowserRouter>
+  </LanguageProvider>
+</ThemeProvider>
   );
 }
 
 export default App;
+
