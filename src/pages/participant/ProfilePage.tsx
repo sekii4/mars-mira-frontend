@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CheckCircle2, Loader2, Settings } from 'lucide-react';
 
 export const ProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -50,12 +50,20 @@ export const ProfilePage = () => {
 
   return (
     <div className="w-full max-w-2xl mx-auto px-6 sm:px-10 py-10 sm:py-12 space-y-6">
-      <Button asChild variant="ghost" className="rounded-full gap-2 -ml-3 font-semibold">
-        <Link to="/dashboard">
-          <ArrowLeft className="h-4 w-4" />
-          <span>Nazad na početnu</span>
-        </Link>
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button asChild variant="ghost" className="rounded-full gap-2 -ml-3 font-semibold">
+          <Link to="/dashboard">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Nazad na početnu</span>
+          </Link>
+        </Button>
+        <Button asChild variant="outline" size="sm" className="rounded-full gap-2 font-semibold text-xs border-border/80">
+          <Link to="/settings">
+            <Settings className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Postavke</span>
+          </Link>
+        </Button>
+      </div>
 
       <Card className="shadow-md rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
         <div className="space-y-2">
