@@ -8,6 +8,7 @@ export interface AdminParticipant {
   email: string;
   country: string;
   city: string;
+  is_domestic?: boolean;
   group_id: number | null;
   group_name: string | null;
   status: MarchStatus;
@@ -28,6 +29,7 @@ export interface ListParticipantsFilters {
   group_id?: number;
   status?: MarchStatus;
   search?: string;
+  is_domestic?: boolean;
 }
 
 export interface ListParticipantsResponse {
@@ -45,6 +47,7 @@ export const listParticipants = async (
   if (filters.group_id) params.group_id = String(filters.group_id);
   if (filters.status) params.status = filters.status;
   if (filters.search) params.search = filters.search;
+  if (typeof filters.is_domestic === 'boolean') params.is_domestic = String(filters.is_domestic);
 
   const response = await apiClient.get<ListParticipantsResponse>('/admin/participants', { params });
   return response.data;
@@ -108,5 +111,98 @@ export interface GroupDetailResponse {
 
 export const getGroupDetail = async (gid: number): Promise<GroupDetailResponse> => {
   const response = await apiClient.get<GroupDetailResponse>(`/admin/groups/${gid}`);
+  return response.data;
+};
+
+export interface DomesticVsForeignBreakdown {
+  is_domestic: boolean;
+  label: string;
+  count: number;
+  percentage: number;
+}
+
+export interface DomesticVsForeignStats {
+  domestic: number;
+  foreign: number;
+  domestic_percentage: number;
+  foreign_percentage: number;
+  breakdown: DomesticVsForeignBreakdown[];
+}
+
+export interface StatusBreakdown {
+  status: MarchStatus;
+  label: string;
+  count: number;
+  percentage: number;
+}
+
+export interface ByStatusStats {
+  registered: number;
+  active: number;
+  finished: number;
+  breakdown: StatusBreakdown[];
+}
+
+export interface CountryCityStat {
+  country: string;
+  city: string;
+  is_domestic: boolean;
+  count: number;
+  percentage: number;
+}
+
+export interface CountryStat {
+  country: string;
+  is_domestic: boolean;
+  count: number;
+  percentage: number;
+}
+
+export interface CityStat {
+  city: string;
+  country: string;
+  count: number;
+  percentage: number;
+}
+
+export interface TopGroupStat {
+  gid: number;
+  name: string;
+  join_code: string;
+  member_count: number;
+}
+
+export interface GroupsStatistics {
+  total_groups: number;
+  participants_in_groups: number;
+  independent_participants: number;
+  avg_group_size: number;
+  largest_group: {
+    gid: number;
+    name: string;
+    member_count: number;
+  } | null;
+  top_groups: TopGroupStat[];
+}
+
+export interface AdminStatisticsResponse {
+  success: boolean;
+  event: {
+    eid: number;
+    name: string;
+    start_date: string;
+    end_date: string;
+  } | null;
+  total_participants: number;
+  domestic_vs_foreign: DomesticVsForeignStats;
+  by_status: ByStatusStats;
+  by_country_and_city: CountryCityStat[];
+  by_country: CountryStat[];
+  by_city: CityStat[];
+  groups: GroupsStatistics;
+}
+
+export const getAdminStatistics = async (): Promise<AdminStatisticsResponse> => {
+  const response = await apiClient.get<AdminStatisticsResponse>('/admin/statistics');
   return response.data;
 };

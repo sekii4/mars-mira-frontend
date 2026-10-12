@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   listParticipants,
   getParticipantDetail,
@@ -55,16 +55,26 @@ const useDebouncedValue = <T,>(value: T, delayMs: number): T => {
 };
 
 export const ParticipantsPage = () => {
+  const [searchParams] = useSearchParams();
   const [participants, setParticipants] = useState<AdminParticipant[]>([]);
   const [groups, setGroups] = useState<AdminGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const initialDomestic = searchParams.get('is_domestic') === 'true'
+    ? 'domestic'
+    : searchParams.get('is_domestic') === 'false'
+    ? 'foreign'
+    : 'all';
+
+  const initialStatus = (searchParams.get('status') as MarchStatus) || '';
+
   const [countryInput, setCountryInput] = useState('');
   const [cityInput, setCityInput] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const [statusFilter, setStatusFilter] = useState<MarchStatus | ''>('');
+  const [statusFilter, setStatusFilter] = useState<MarchStatus | ''>(initialStatus);
   const [groupFilter, setGroupFilter] = useState<string>('');
+  const [domesticFilter, setDomesticFilter] = useState<'all' | 'domestic' | 'foreign'>(initialDomestic);
 
   const country = useDebouncedValue(countryInput, 400);
   const city = useDebouncedValue(cityInput, 400);
@@ -94,6 +104,7 @@ export const ParticipantsPage = () => {
           search: search || undefined,
           status: statusFilter || undefined,
           group_id: groupFilter ? Number(groupFilter) : undefined,
+          is_domestic: domesticFilter === 'domestic' ? true : domesticFilter === 'foreign' ? false : undefined,
         });
         setParticipants(res.participants);
       } catch (err: unknown) {
@@ -104,7 +115,7 @@ export const ParticipantsPage = () => {
     };
 
     fetchParticipants();
-  }, [country, city, search, statusFilter, groupFilter]);
+  }, [country, city, search, statusFilter, groupFilter, domesticFilter]);
 
   useEffect(() => {
     if (selectedUid === null) {
@@ -123,7 +134,13 @@ export const ParticipantsPage = () => {
     setSelectedUid(uid);
   };
 
-  const hasActiveFilters = countryInput || cityInput || searchInput || statusFilter || groupFilter;
+  const hasActiveFilters =
+    countryInput ||
+    cityInput ||
+    searchInput ||
+    statusFilter ||
+    groupFilter ||
+    domesticFilter !== 'all';
 
   const clearFilters = () => {
     setCountryInput('');
@@ -131,6 +148,7 @@ export const ParticipantsPage = () => {
     setSearchInput('');
     setStatusFilter('');
     setGroupFilter('');
+    setDomesticFilter('all');
   };
 
   return (
@@ -138,7 +156,7 @@ export const ParticipantsPage = () => {
       <Button asChild variant="ghost" className="rounded-full gap-2 -ml-3 font-semibold">
         <Link to="/admin">
           <ArrowLeft className="h-4 w-4" />
-          <span>Nazad na admin panel</span>
+          <span>Nazad na statistiku i admin panel</span>
         </Link>
       </Button>
 
@@ -178,7 +196,7 @@ export const ParticipantsPage = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as MarchStatus | '')}
-            className="h-10 rounded-xl border border-input bg-background px-3 text-sm"
+            className="h-10 rounded-xl border border-input bg-background px-3 text-sm cursor-pointer"
           >
             <option value="">Svi statusi</option>
             <option value="registered">Registrovan</option>
@@ -191,7 +209,7 @@ export const ParticipantsPage = () => {
           <select
             value={groupFilter}
             onChange={(e) => setGroupFilter(e.target.value)}
-            className="h-10 rounded-xl border border-input bg-background px-3 text-sm max-w-xs"
+            className="h-10 rounded-xl border border-input bg-background px-3 text-sm max-w-xs cursor-pointer"
           >
             <option value="">Sve grupe</option>
             {groups.map((g) => (
@@ -199,6 +217,17 @@ export const ParticipantsPage = () => {
                 {g.name} ({g.member_count})
               </option>
             ))}
+          </select>
+
+          <select
+            aria-label="Filter po porijeklu (is_domestic)"
+            value={domesticFilter}
+            onChange={(e) => setDomesticFilter(e.target.value as 'all' | 'domestic' | 'foreign')}
+            className="h-10 rounded-xl border border-input bg-background px-3 text-sm max-w-xs font-medium cursor-pointer"
+          >
+            <option value="all">Sva porijekla (domaći & strani)</option>
+            <option value="domestic">Samo domaći (BiH)</option>
+            <option value="foreign">Samo strani (svijet / dijaspora)</option>
           </select>
 
           {hasActiveFilters && (
@@ -261,7 +290,18 @@ export const ParticipantsPage = () => {
                       {p.email}
                     </td>
                     <td className="px-5 py-3.5 text-muted-foreground whitespace-nowrap">
-                      {p.city}, {p.country}
+                      <div className="flex items-center gap-2">
+                        <span>{p.city}, {p.country}</span>
+                        {p.is_domestic ? (
+                          <Badge className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold rounded-full px-2 py-0 border-emerald-300">
+                            BiH
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-blue-100 text-blue-800 text-[10px] font-semibold rounded-full px-2 py-0 border-blue-300">
+                            Strani
+                          </Badge>
+                        )}
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-muted-foreground hidden sm:table-cell">
                       {p.group_name || <span className="text-muted-foreground/50">—</span>}
@@ -307,6 +347,7 @@ export const ParticipantsPage = () => {
               </div>
               {[
                 ['Email', detail.email],
+                ['Porijeklo', detail.is_domestic ? 'Domaći učesnik (BiH)' : 'Strani državljanin'],
                 ['Država', detail.country],
                 ['Grad', detail.city],
                 ['Grupa', detail.group_name || '—'],
