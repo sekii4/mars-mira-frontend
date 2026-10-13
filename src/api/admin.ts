@@ -206,3 +206,48 @@ export const getAdminStatistics = async (): Promise<AdminStatisticsResponse> => 
   const response = await apiClient.get<AdminStatisticsResponse>('/admin/statistics');
   return response.data;
 };
+
+export type ParticipantFreshness = 'fresh' | 'moderate' | 'stale';
+
+export interface AdminLiveParticipant {
+  uid: number;
+  pid: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  city: string | null;
+  country: string | null;
+  group_id: number | null;
+  group_name: string | null;
+  start_at: string;
+  latitude: number;
+  longitude: number;
+  recorded_at: string;
+  minutes_ago: number;
+  freshness: ParticipantFreshness;
+  last_checkpoint: {
+    name: string;
+    stage_day: number;
+    type: string;
+    reached_at: string;
+  } | null;
+  visited_checkpoints_count: number;
+}
+
+export interface AdminLiveLocationsResponse {
+  success: boolean;
+  event: {
+    eid: number;
+    name: string;
+  } | null;
+  total_active: number;
+  fresh_count: number;
+  moderate_count: number;
+  stale_count: number;
+  participants: AdminLiveParticipant[];
+}
+
+export const getAdminLiveLocations = async (): Promise<AdminLiveLocationsResponse> => {
+  const response = await apiClient.get<AdminLiveLocationsResponse>('/admin/live-locations');
+  return response.data;
+};

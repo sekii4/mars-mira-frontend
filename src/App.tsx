@@ -15,6 +15,7 @@ import { AdminRoutePage } from './pages/admin/AdminRoutePage';
 import { RouteMapPage } from './pages/participant/RouteMapPage';
 import { GroupsPage } from './pages/admin/GroupsPage';
 import { ParticipantsPage } from './pages/admin/ParticipantsPage';
+import { AdminLiveMapPage } from './pages/admin/AdminLiveMapPage';
 
 import './App.css';
 
@@ -100,6 +101,15 @@ export function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/admin/live-map"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminLiveMapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/admin/live" element={<Navigate to="/admin/live-map" replace />} />
               <Route
                 path="/map"
                 element={
