@@ -271,6 +271,7 @@ export const ParticipantsPage = () => {
                 <tr className="border-b border-border/70 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   <th className="px-5 py-3.5">Ime i prezime</th>
                   <th className="px-5 py-3.5 hidden md:table-cell">Email</th>
+                  <th className="px-5 py-3.5">Događaj</th>
                   <th className="px-5 py-3.5">Država / Grad</th>
                   <th className="px-5 py-3.5 hidden sm:table-cell">Grupa</th>
                   <th className="px-5 py-3.5">Status</th>
@@ -288,6 +289,9 @@ export const ParticipantsPage = () => {
                     </td>
                     <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell truncate max-w-50">
                       {p.email}
+                    </td>
+                    <td className="px-5 py-3.5 font-medium text-foreground whitespace-nowrap">
+                      {p.event_name || <span className="text-muted-foreground/50">Nije prijavljen</span>}
                     </td>
                     <td className="px-5 py-3.5 text-muted-foreground whitespace-nowrap">
                       <div className="flex items-center gap-2">
