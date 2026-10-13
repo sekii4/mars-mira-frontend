@@ -16,6 +16,7 @@ import { RouteMapPage } from './pages/participant/RouteMapPage';
 import { GroupsPage } from './pages/admin/GroupsPage';
 import { ParticipantsPage } from './pages/admin/ParticipantsPage';
 import { AdminLiveMapPage } from './pages/admin/AdminLiveMapPage';
+import { EventsPage } from './pages/admin/EventsPage';
 
 import './App.css';
 
@@ -90,6 +91,14 @@ export function App() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <GroupsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/events"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <EventsPage />
                   </ProtectedRoute>
                 }
               />

@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User, Route, BarChart3, Settings, Activity } from 'lucide-react';
+import { LogOut, User, Route, BarChart3, Settings, Activity, CalendarDays } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -62,6 +62,20 @@ export const Navbar = () => {
               </Link>
             </Button>
           </>
+        )}
+
+        {isAuthenticated && user?.role === 'admin' && (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-full border-border/80 hover:border-emerald-300 bg-background/60 hover:bg-emerald-50/80 text-foreground/90 hover:text-emerald-950 h-10 px-4 text-sm font-semibold gap-2 transition-colors shadow-2xs cursor-pointer hidden lg:flex"
+          >
+            <Link to="/admin/events">
+              <CalendarDays className="h-4 w-4 text-emerald-600" />
+              <span>Događaji</span>
+            </Link>
+          </Button>
         )}
 
         {isAuthenticated && (
