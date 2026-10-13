@@ -333,8 +333,8 @@ export const AdminDashboardPage = () => {
           <div className="pt-3 border-t border-border/60 flex items-center justify-between">
             <span className="text-xs text-muted-foreground font-medium">Praćenje etape</span>
             <Button asChild variant="ghost" size="sm" className="rounded-full text-xs font-semibold text-emerald-800 hover:bg-emerald-50 gap-1 px-3">
-              <Link to="/map">
-                <span>Mapa</span>
+              <Link to="/admin/live-map">
+                <span>Live mapa</span>
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
@@ -775,6 +775,25 @@ export const AdminDashboardPage = () => {
                   <div className="text-left">
                     <div className="text-xs font-bold">Upravljanje grupama</div>
                     <div className="text-[11px] text-muted-foreground">{stats?.groups.total_groups || 0} formiranih</div>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              variant="outline"
+              className="w-full justify-between rounded-2xl h-14 px-4 hover:border-emerald-300 hover:bg-emerald-50/70 text-foreground transition-all"
+            >
+              <Link to="/admin/live-map">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <Activity className="h-4 w-4" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs font-bold">Live mapa svih aktivnih</div>
+                    <div className="text-[11px] text-muted-foreground">{activeCount} na stazi uživo</div>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />

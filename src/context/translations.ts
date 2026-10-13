@@ -12,6 +12,7 @@ export const dictionary: Translations = {
   nav_brand_title: { bs: 'Marš Mira', en: 'Peace March' },
   nav_brand_sub: { bs: 'Srebrenica', en: 'Srebrenica' },
   nav_stats: { bs: 'Statistika', en: 'Statistics' },
+  nav_live_map: { bs: 'Uživo mapa', en: 'Live Map' },
   nav_route: { bs: 'Trasa i punktovi', en: 'Route & Checkpoints' },
   nav_settings: { bs: 'Postavke', en: 'Settings' },
   nav_profile: { bs: 'Profil', en: 'Profile' },
