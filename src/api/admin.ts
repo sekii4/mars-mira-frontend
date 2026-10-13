@@ -9,6 +9,8 @@ export interface AdminParticipant {
   country: string;
   city: string;
   is_domestic?: boolean;
+  event_id: number | null;
+  event_name: string | null;
   group_id: number | null;
   group_name: string | null;
   status: MarchStatus;
