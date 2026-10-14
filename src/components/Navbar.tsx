@@ -1,14 +1,16 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User, Route, BarChart3, Settings, Activity, CalendarDays, House } from 'lucide-react';
+import { LogOut, User, Route, BarChart3, Settings, Activity, CalendarDays, House, Menu, X } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -16,7 +18,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-md shadow-xs flex items-center justify-between px-6 sm:px-10 lg:px-16 h-20">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur-md shadow-xs flex items-center justify-between px-4 sm:px-10 lg:px-16 h-20">
       {/* Brand */}
       <Link to="/" className="flex items-center gap-3.5 group transition-opacity hover:opacity-90">
         <MarsMiraLogo className="h-11 w-11 rounded-xl shadow-sm border border-border/40" />
@@ -31,7 +33,7 @@ export const Navbar = () => {
       </Link>
 
       {/* User / Actions */}
-      <div className="flex items-center gap-2.5 sm:gap-4">
+      <div className="hidden md:flex items-center gap-2.5 sm:gap-4">
         {isAuthenticated && user?.role === 'admin' && (
           <>
             <Button
@@ -158,6 +160,46 @@ export const Navbar = () => {
           </Button>
         )}
       </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="md:hidden rounded-full"
+        aria-label={menuOpen ? 'Zatvori navigaciju' : 'Otvori navigaciju'}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
+
+      {menuOpen && (
+        <nav className="absolute left-0 right-0 top-full flex flex-col gap-2 border-b border-border bg-card p-4 shadow-lg md:hidden">
+          {isAuthenticated && user?.role === 'admin' ? (
+            <>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/admin/live-map" onClick={() => setMenuOpen(false)}>{t('nav_live_map')}</Link>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/admin" onClick={() => setMenuOpen(false)}>{t('nav_stats')}</Link>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/admin/events" onClick={() => setMenuOpen(false)}>Događaji</Link>
+            </>
+          ) : isAuthenticated && user?.role === 'participant' ? (
+            <>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/dashboard" onClick={() => setMenuOpen(false)}>Početna</Link>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/map" onClick={() => setMenuOpen(false)}>{t('nav_route')}</Link>
+            </>
+          ) : null}
+          <Link className="rounded-md px-3 py-2 hover:bg-muted" to="/settings" onClick={() => setMenuOpen(false)}>{t('nav_settings')}</Link>
+          {isAuthenticated && user ? (
+            <>
+              <Link className="rounded-md px-3 py-2 hover:bg-muted" to={user.role === 'admin' ? '/admin' : '/settings?tab=profile'} onClick={() => setMenuOpen(false)}>
+                {user.role === 'admin' ? `Admin: ${user.first_name}` : 'Uredi profil'}
+              </Link>
+              <button className="rounded-md px-3 py-2 text-left text-rose-600 hover:bg-rose-50" onClick={handleLogout}>{t('nav_logout')}</button>
+            </>
+          ) : (
+            <Link className="rounded-md px-3 py-2 font-semibold text-emerald-700 hover:bg-emerald-50" to="/auth" onClick={() => setMenuOpen(false)}>{t('nav_login')}</Link>
+          )}
+        </nav>
+      )}
     </header>
   );
 };
