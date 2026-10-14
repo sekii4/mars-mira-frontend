@@ -7,7 +7,6 @@ import { Navbar } from './components/Navbar';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/participant/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { ProfilePage } from './pages/participant/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
@@ -57,7 +56,7 @@ export function App() {
                 path="/profile"
                 element={
                   <ProtectedRoute allowedRoles={['participant']}>
-                    <ProfilePage />
+                    <Navigate to="/settings?tab=profile" replace />
                   </ProtectedRoute>
                 }
               />
@@ -122,7 +121,7 @@ export function App() {
               <Route
                 path="/map"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['participant']}>
                     <RouteMapPage />
                   </ProtectedRoute>
                 }
@@ -142,4 +141,3 @@ export function App() {
 }
 
 export default App;
-

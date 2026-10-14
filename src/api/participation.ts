@@ -9,15 +9,30 @@ export interface Participation {
   finish_at: string | null;
 }
 
+export interface ParticipationEvent {
+  eid: number;
+  name: string;
+  description: string | null;
+  start_date: string | null;
+  end_date: string | null;
+}
+
 export interface ParticipationResponse {
   success: boolean;
   message?: string;
+  event?: ParticipationEvent | null;
+  is_registered?: boolean;
   participation: Participation | null;
   status: MarchStatus;
 }
 
 export const getParticipationStatus = async (): Promise<ParticipationResponse> => {
   const response = await apiClient.get<ParticipationResponse>('/participation/me');
+  return response.data;
+};
+
+export const registerForCurrentEvent = async (): Promise<ParticipationResponse> => {
+  const response = await apiClient.post<ParticipationResponse>('/participation/register');
   return response.data;
 };
 

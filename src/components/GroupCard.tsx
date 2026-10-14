@@ -16,7 +16,7 @@ import { getMyGroup, createGroup, joinGroup, type Group } from '@/api/groups';
 import { getApiErrorMessage } from '@/api/errors';
 import { Users, KeyRound, Plus, Copy, Check, Loader2, AlertCircle } from 'lucide-react';
 
-export const GroupCard = () => {
+export const GroupCard = ({ isEventRegistered }: { isEventRegistered: boolean | null }) => {
   const [group, setGroup] = useState<Group | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -180,7 +180,7 @@ export const GroupCard = () => {
         </div>
 
         {!isLoading && !loadError && !group && (
-          <div className="flex flex-wrap gap-3 pt-2">
+          isEventRegistered ? <div className="flex flex-wrap gap-3 pt-2">
             <Button
               onClick={openJoinModal}
               className="flex-1 h-11 rounded-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-2 shadow-sm shadow-emerald-600/20"
@@ -196,7 +196,9 @@ export const GroupCard = () => {
               <Plus className="h-4 w-4" />
               <span>Kreiraj tim</span>
             </Button>
-          </div>
+          </div> : <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">
+            {isEventRegistered === null ? 'Provjeravamo status prijave na događaj...' : 'Prvo se prijavite na Marš Mira da biste kreirali grupu ili joj se pridružili.'}
+          </p>
         )}
       </Card>
 

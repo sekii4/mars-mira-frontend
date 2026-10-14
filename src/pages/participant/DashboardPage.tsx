@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card } from '@/components/ui/card';
@@ -5,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { GroupCard } from '@/components/GroupCard';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
+import { EventRegistrationCard } from '@/components/EventRegistrationCard';
 import { MapPin, Route, ShieldCheck, UserCheck, LogOut, Pencil } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
+  const [isEventRegistered, setIsEventRegistered] = useState<boolean | null>(null);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-10 sm:py-12 space-y-8 lg:space-y-10">
@@ -49,10 +52,12 @@ export const DashboardPage = () => {
         </div>
       </Card>
 
+      <EventRegistrationCard onRegistrationStatusChange={setIsEventRegistered} />
+
       {/* Grid: 3 Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Card 1: Team & Group */}
-        <GroupCard />
+        <GroupCard isEventRegistered={isEventRegistered} />
 
         {/* Card 2: Profile Details */}
         <Card className="flex flex-col justify-between shadow-sm border-border hover:shadow-md transition-shadow rounded-3xl p-6 sm:p-8 [--card-spacing:0] space-y-6">
