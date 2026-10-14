@@ -9,6 +9,7 @@ import { useGeolocation, type LatLng } from '@/hooks/useGeolocation';
 import { getApiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 import { Play, Square, CheckCircle2, Loader2, AlertCircle, Navigation } from 'lucide-react';
 
 interface StartFinishButtonProps {
@@ -26,6 +27,7 @@ const STATUS_LABEL: Record<MarchStatus, string> = {
 export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFinishButtonProps) => {
   const [status, setStatus] = useState<MarchStatus>('registered');
   const [isLoading, setIsLoading] = useState(true);
+  const [isEventRegistered, setIsEventRegistered] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -34,6 +36,7 @@ export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFin
       try {
         const res = await getParticipationStatus();
         setStatus(res.status);
+        setIsEventRegistered(Boolean(res.is_registered));
       } catch (err: unknown) {
         setErrorMessage(getApiErrorMessage(err, 'Nije moguće učitati status marša.'));
       } finally {
@@ -59,6 +62,7 @@ export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFin
     try {
       const res = await startMarch();
       setStatus(res.status);
+      setIsEventRegistered(true);
     } catch (err: unknown) {
       setErrorMessage(getApiErrorMessage(err, 'Pokretanje marša nije uspjelo. Pokušajte ponovo.'));
     } finally {
@@ -90,8 +94,13 @@ export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFin
 
   return (
     <div className="flex flex-col gap-2">
+      {!isEventRegistered && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">
+          Za pokretanje marša prvo se prijavite na događaj na <Link to="/dashboard" className="font-bold underline underline-offset-2">početnoj stranici</Link>.
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-3">
-        <Badge
+        {isEventRegistered && <Badge
           className={`rounded-full px-3.5 py-1 text-xs font-semibold ${
             status === 'active'
               ? 'bg-emerald-600 hover:bg-emerald-600 text-white'
@@ -102,7 +111,7 @@ export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFin
           variant={status === 'registered' ? 'outline' : 'default'}
         >
           {STATUS_LABEL[status]}
-        </Badge>
+        </Badge>}
 
         {status === 'active' && (
           <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700">
@@ -111,7 +120,7 @@ export const StartFinishButton = ({ onStatusChange, onPositionChange }: StartFin
           </span>
         )}
 
-        {status === 'registered' && (
+        {isEventRegistered && status === 'registered' && (
           <Button
             type="button"
             onClick={handleStart}

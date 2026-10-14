@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { MarsMiraLogo } from '@/components/MarsMiraLogo';
-import { LogOut, User, Route, BarChart3, Settings, Activity, CalendarDays } from 'lucide-react';
+import { LogOut, User, Route, BarChart3, Settings, Activity, CalendarDays, House } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -78,7 +78,21 @@ export const Navbar = () => {
           </Button>
         )}
 
-        {isAuthenticated && (
+        {isAuthenticated && user?.role === 'participant' && (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-full border-border/80 hover:border-emerald-300 bg-background/60 hover:bg-emerald-50/80 text-foreground/90 hover:text-emerald-950 h-10 px-4 text-sm font-semibold gap-2 transition-colors shadow-2xs cursor-pointer hidden sm:flex"
+          >
+            <Link to="/dashboard">
+              <House className="h-4 w-4 text-emerald-600" />
+              <span>Početna</span>
+            </Link>
+          </Button>
+        )}
+
+        {isAuthenticated && user?.role === 'participant' && (
           <Button
             asChild
             variant="outline"
@@ -114,7 +128,7 @@ export const Navbar = () => {
               className="rounded-full border-emerald-200/90 bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-950 h-10 px-4 min-w-10 sm:min-w-36.25 text-sm font-semibold transition-colors shadow-xs justify-center gap-2"
             >
               <Link
-                to={user.role === 'admin' ? '/admin' : '/profile'}
+                to={user.role === 'admin' ? '/admin' : '/settings?tab=profile'}
                 title={user.role === 'admin' ? 'Administratorski panel' : 'Uredi profil'}
               >
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
@@ -147,3 +161,4 @@ export const Navbar = () => {
     </header>
   );
 };
+

@@ -1,13 +1,15 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme, type ThemeMode } from '@/context/ThemeContext';
 import { useLanguage, type Language } from '@/context/LanguageContext';
-import { updateParticipantSettings } from '@/api/participant';
+import { updateParticipantSettings, updateProfile } from '@/api/participant';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -34,18 +36,79 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  UserRound,
 } from 'lucide-react';
 
 export const SettingsPage = () => {
   const { user, isAuthenticated, updateUser } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') === 'profile' ? 'profile' : 'all');
 
   const [localSharingOverride, setLocalSharingOverride] = useState<boolean | null>(null);
   const locationSharing = localSharingOverride !== null ? localSharingOverride : user?.location_sharing !== false;
   const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [dataDialogOpen, setDataDialogOpen] = useState(false);
+  const [firstName, setFirstName] = useState(user?.first_name ?? '');
+  const [lastName, setLastName] = useState(user?.last_name ?? '');
+  const [country, setCountry] = useState(user?.country ?? '');
+  const [city, setCity] = useState(user?.city ?? '');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+
+  useEffect(() => {
+    setFirstName(user?.first_name ?? '');
+    setLastName(user?.last_name ?? '');
+    setCountry(user?.country ?? '');
+    setCity(user?.city ?? '');
+  }, [user?.first_name, user?.last_name, user?.country, user?.city]);
+
+  useEffect(() => {
+    const requestedTab = searchParams.get('tab');
+     if (requestedTab === 'profile' && user?.role === 'participant') {
+      setActiveTab('profile');
+    }
+  }, [searchParams, user?.role]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    const nextParams = new URLSearchParams(searchParams);
+    if (tab === 'profile') nextParams.set('tab', 'profile');
+    else nextParams.delete('tab');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleProfileSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setProfileError('');
+    setProfileSuccess('');
+    if (!firstName.trim() || !lastName.trim() || !country.trim() || !city.trim()) {
+      setProfileError(language === 'bs' ? 'Molimo popunite sva polja.' : 'Please fill in all fields.');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    try {
+      const response = await updateProfile({
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        country: country.trim(),
+        city: city.trim(),
+      });
+      updateUser(response.user);
+      setProfileSuccess(response.message || (language === 'bs' ? 'Profil je uspješno ažuriran.' : 'Profile updated successfully.'));
+    } catch (error: unknown) {
+      setProfileError(
+        (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
+        (language === 'bs' ? 'Greška prilikom spremanja profila. Pokušajte ponovo.' : 'Could not save profile. Please try again.')
+      );
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const handleLanguageChange = async (newLang: Language) => {
     setLanguage(newLang);
@@ -185,11 +248,16 @@ export const SettingsPage = () => {
       </div>
 
       {/* Tabs Layout */}
-      <Tabs defaultValue="all" className="w-full space-y-6">
-        <TabsList className="bg-muted/60 p-1.5 rounded-2xl grid grid-cols-4 max-w-xl">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full space-y-6">
+        <TabsList className={`bg-muted/60 p-1.5 rounded-2xl grid ${user?.role === 'participant' ? 'grid-cols-2 sm:grid-cols-5 max-w-2xl' : 'grid-cols-2 sm:grid-cols-4 max-w-xl'}`}>
           <TabsTrigger value="all" className="rounded-xl font-bold text-xs sm:text-sm">
             {t('tab_general')}
           </TabsTrigger>
+          {user?.role === 'participant' && (
+            <TabsTrigger value="profile" className="rounded-xl font-bold text-xs sm:text-sm">
+              {language === 'bs' ? 'Profil' : 'Profile'}
+            </TabsTrigger>
+          )}
           <TabsTrigger value="language" className="rounded-xl font-bold text-xs sm:text-sm">
             {t('tab_language')}
           </TabsTrigger>
@@ -200,6 +268,56 @@ export const SettingsPage = () => {
             {t('tab_privacy')}
           </TabsTrigger>
         </TabsList>
+
+        {user?.role === 'participant' && (
+          <TabsContent value="profile" className="space-y-4">
+            <Card className="rounded-3xl border-border/80 shadow-md">
+              <CardHeader className="p-6 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <UserRound className="h-5 w-5 text-emerald-600" />
+                  <CardTitle className="text-lg font-bold">{language === 'bs' ? 'Uredi profil' : 'Edit profile'}</CardTitle>
+                </div>
+                <CardDescription>
+                  {language === 'bs' ? 'Ažurirajte svoje lične podatke. Email adresa se ne može mijenjati.' : 'Update your personal information. Your email address cannot be changed.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 pt-0 space-y-4">
+                {profileError && <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-800">{profileError}</div>}
+                {profileSuccess && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{profileSuccess}</div>}
+                <form onSubmit={handleProfileSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="settings-first-name">{language === 'bs' ? 'Ime' : 'First name'}</Label>
+                      <Input id="settings-first-name" required maxLength={100} value={firstName} onChange={(e) => setFirstName(e.target.value)} className="h-12 rounded-xl px-4" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="settings-last-name">{language === 'bs' ? 'Prezime' : 'Last name'}</Label>
+                      <Input id="settings-last-name" required maxLength={100} value={lastName} onChange={(e) => setLastName(e.target.value)} className="h-12 rounded-xl px-4" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="settings-profile-email">Email</Label>
+                    <Input id="settings-profile-email" value={user.email} disabled className="h-12 rounded-xl px-4" />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="settings-country">{language === 'bs' ? 'Država' : 'Country'}</Label>
+                      <Input id="settings-country" required maxLength={100} value={country} onChange={(e) => setCountry(e.target.value)} className="h-12 rounded-xl px-4" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="settings-city">{language === 'bs' ? 'Grad' : 'City'}</Label>
+                      <Input id="settings-city" required maxLength={100} value={city} onChange={(e) => setCity(e.target.value)} className="h-12 rounded-xl px-4" />
+                    </div>
+                  </div>
+                  <Button type="submit" disabled={isSavingProfile} className="w-full h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2">
+                    {isSavingProfile && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {isSavingProfile ? (language === 'bs' ? 'Spremanje...' : 'Saving...') : (language === 'bs' ? 'Spremi promjene' : 'Save changes')}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
         {/* Overview (All) Tab */}
         <TabsContent value="all" className="space-y-6">
